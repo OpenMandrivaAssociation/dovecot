@@ -16,7 +16,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		%{name}
 Version:	%{version}
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://dovecot.org
