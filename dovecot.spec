@@ -1,5 +1,7 @@
 %define name		dovecot
-%define version     1.0.rc26
+%define version     1.0.0
+%define rel 1
+
 
 %global	with_ldap	0
 %global	with_sasl	0
@@ -16,7 +18,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		%{name}
 Version:	%{version}
-Release:	%mkrel 2
+Release:	%mkrel %rel
 License:	GPL
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -118,7 +120,8 @@ cat %{SOURCE2} > %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
 cp %{SOURCE4} .
 cp %{SOURCE5} . 
-rm -f %{buildroot}%{_sysconfdir}/dovecot-example.conf
+# placed in doc
+rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 
 # generate ghost .pem file
 mkdir -p %{buildroot}%{_sysconfdir}/ssl/dovecot/{certs,private}
