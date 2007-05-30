@@ -1,7 +1,5 @@
 %define name		dovecot
-%define version     1.0.0
-%define rel 1
-
+%define version     1.0.rc7
 
 %global	with_ldap	0
 %global	with_sasl	0
@@ -18,15 +16,20 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		%{name}
 Version:	%{version}
-Release:	%mkrel %rel
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://dovecot.org
 Source0:	http://dovecot.org/releases/%{name}-%{version}.tar.bz2
-Source1:	%{name}-pamd
-Source2:	%{name}-init
+Source1:	%{name}-pamd.bz2
+Source2:	%{name}-init.bz2
+Source3:	%{name}.conf.bz2
 Source4:    http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:    http://dovecot.org/tools/mboxcrypt.pl
+# (misc) patch to change the default order of autodiscovery ( ~/Mail before ~/mail )
+Patch2:		%{name}-0.99.10-mbox.patch.bz2
+# (saispo) patch for CVE-2006-2414
+Patch3:		%{name}-CVE-2006-2414.patch.bz2
 BuildRoot: 	%{_tmppath}/root-%{name}-%{version}
 Provides:       imap-server pop3-server
 Provides:		imaps-server pop3s-server
@@ -85,6 +88,8 @@ This package have some configurable build options:
 
 %prep
 %setup -q
+#%patch2 -p1 -b .mbox
+#%patch3 -p1 -b .CVE-2006-2414
 
 %build
 %configure \
@@ -115,13 +120,12 @@ mkdir -p %{buildroot}%{_datadir}/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/pam.d \
 	%{buildroot}%{_initrddir} \
 	%{buildroot}%{_var}/%{_lib}/%{name}
-cat %{SOURCE1} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
-cat %{SOURCE2} > %{buildroot}%{_initrddir}/%{name}
-cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
+bzcat %{SOURCE1} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
+bzcat %{SOURCE2} > %{buildroot}%{_initrddir}/%{name}
+bzcat %{SOURCE3} > %{buildroot}%{_sysconfdir}/dovecot.conf
 cp %{SOURCE4} .
 cp %{SOURCE5} . 
-# placed in doc
-rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
+rm -f %{buildroot}%{_sysconfdir}/dovecot-example.conf
 
 # generate ghost .pem file
 mkdir -p %{buildroot}%{_sysconfdir}/ssl/dovecot/{certs,private}
@@ -197,4 +201,73 @@ rm -rf %{buildroot}
 %{_datadir}/%{name}/*.a
 %{_datadir}/%{name}/imap/*.a
 
+%changelog
+* Mon Sep 04 2006 Jerome Soyer <saispo@mandriva.org> 1.0.rc7.1mdv2007.0
+- new version
 
+* Wed Jul 12 2006 Nicolas Chipaux <chipaux@mandriva.com> 1.0.rc2.1mdv2007.0
+- new version
+- split in devel rpm
+
+* Sun Jun 25 2006 Nicolas Chipaux <chipaux@mandriva.com> 1.09.beta9.1mdv2007.0
+- new version
+
+* Mon May 29 2006 Jerome Soyer <saispo@mandriva.org> 0.99.14-4mdv2007.0
+- CVE-2006-2414 
+- use mkrel
+
+* Wed Nov 30 2005 Oden Eriksson <oeriksson@mandriva.com> 0.99.14-3mdk
+- rebuilt against openssl-0.9.8a
+
+* Tue Aug 30 2005 Oden Eriksson <oeriksson@mandriva.com> 0.99.14-2mdk
+- rebuilt against new openldap-2.3.6 libs
+
+* Fri Mar 18 2005 Michael Scherer <misc@mandrake.org> 0.99.14-1mdk
+- New release 0.99.14
+- better summary
+- add some tools in %%doc
+
+* Fri Feb 04 2005 Michael Scherer <misc@mandrake.org> 0.99.12-2mdk
+- Rebuild new ldap
+
+* Sun Dec 05 2004 Michael Scherer <misc@mandrake.org> 0.99.12-1mdk
+- New release 0.99.12
+
+* Mon Aug 10 2004 Tibor Pittich <Tibor.Pittich@mandrake.org> 0.99.10.9-2mdk
+- fix init script to make rpmlint happy
+- create switches to allow/deny some features and and describe it in
+  description
+- update url
+- by default disable pgsql support, added configurable support for mysql
+- change provides to pop3-server and add imaps and pop3s-server provides
+- minimalize number of nonstandard permission in files
+- some other spec changes, macroszification
+
+* Mon Aug 9 2004 Tibor Pittich <Tibor.Pittich@mandrake.org> 0.99.10.9-1mdk
+- 0.99.10.9
+
+* Wed Jul 14 2004 Michael Scherer <misc@mandrake.org> 0.99.10.7-1mdk 
+- 0.99.10.7
+- rpmbuildupdate aware
+
+* Tue Jul 13 2004 Michael Scherer <misc@mandrake.org> 0.99.10.6-1mdk
+- New release 0.99.10.6
+- replaced the patch on conf by a source file
+- fix BuildRequires, and init script ( from Michael Reinsch <mr@uue.org> )
+- remove implicit requires, added new provides scheme
+- remove service restart on upgrade, as it is already done by spec-helper
+
+* Sun Oct 12 2003 Brook Humphrey <bah@linux-mandrake.com> 0.99.10-4mdk
+- fixed syntax error
+
+* Sun Oct 12 2003 Brook Humphrey <bah@linux-mandrake.com> 0.99.10-3mdk
+- fix to properly generate ssl and add directories
+
+* Sun Oct 12 2003 Brook Humphrey <bah@linux-mandrake.com> 0.99.10-2mdk
+- added scripts for generating ssl certificates
+
+* Sun Jul 26 2003 Giuseppe Ghibò <ghibo@mandrakesoft.com> 0.99.10-1mdk
+- initial release based on Diag Wieers <dag@wieers.com> SPEC file.
+- Patch for searching /Mail before /mail.
+- Patch for providing a working default config file (still need
+  to add SSL certificates or script to generate them).
