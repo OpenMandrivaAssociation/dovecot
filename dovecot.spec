@@ -1,6 +1,6 @@
 %define name		dovecot
 %define version     1.0.0
-%define rel 1
+%define rel 2
 
 
 %global	with_ldap	0
@@ -118,6 +118,9 @@ mkdir -p %{buildroot}%{_sysconfdir}/pam.d \
 cat %{SOURCE1} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
 cat %{SOURCE2} > %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
+# Bug #27561 - AdamW 2007/06
+mkdir -p %{buildroot}%{_sysconfdir}/pki/dovecot
+cp doc/dovecot-openssl.cnf %{buildroot}%{_sysconfdir}/pki/dovecot/dovecot-openssl.cnf
 cp %{SOURCE4} .
 cp %{SOURCE5} . 
 # placed in doc
@@ -184,6 +187,8 @@ rm -rf %{buildroot}
 %doc mboxcrypt.pl migration_wuimp_to_dovecot.pl
 %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
+%dir %{_sysconfdir}/pki/dovecot
+%config(noreplace) %{_sysconfdir}/pki/dovecot/dovecot-openssl.cnf
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/*.la
 %{_datadir}/%{name}/*.so
