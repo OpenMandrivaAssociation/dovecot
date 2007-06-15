@@ -1,6 +1,6 @@
 %define name		dovecot
-%define version     1.0.0
-%define rel 2
+%define version     1.0.1
+%define rel 1
 
 
 %global	with_ldap	0
