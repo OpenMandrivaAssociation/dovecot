@@ -119,15 +119,13 @@ cat %{SOURCE1} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
 cat %{SOURCE2} > %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
 # Bug #27561 - AdamW 2007/06
-mkdir -p %{buildroot}%{_sysconfdir}/pki/dovecot
-cp doc/dovecot-openssl.cnf %{buildroot}%{_sysconfdir}/pki/dovecot/dovecot-openssl.cnf
+mkdir -p %{buildroot}%{_sysconfdir}/pki/tls
+cp doc/dovecot-openssl.cnf %{buildroot}%{_sysconfdir}/pki/tls/dovecot.cnf
 cp %{SOURCE4} .
 cp %{SOURCE5} . 
 # placed in doc
 rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 
-# generate ghost .pem file
-mkdir -p %{buildroot}%{_sysconfdir}/ssl/dovecot/{certs,private}
 # Clean up buildroot
 rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 
@@ -143,23 +141,15 @@ rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 # move this somewhere else, because these commands is "dangerous" as rpmlint say
 #
 # create a ssl cert
-if [ ! -f %{_sysconfdir}/ssl/dovecot/certs/dovecot.pem ]; then
-pushd %{_sysconfdir}/ssl/dovecot &>/dev/null
-umask 077
-cat << EOF | openssl req -new -x509 -days 365 -nodes -out certs/dovecot.pem -keyout private/dovecot.pem &>/dev/null
---
-SomeState
-SomeCity
-SomeOrganization
-SomeOrganizationalUnit
-localhost.localdomain
-root@localhost.localdomain
-EOF
-%__chown root.root private/dovecot.pem certs/dovecot.pem
-%__chmod 600 private/dovecot.pem certs/dovecot.pem
-popd &>/dev/null
+# generate SSL cert if needed
+if [ $1 = 1 ]; then
+    openssl req -new -x509 -days 365 \
+        -config %{_sysconfdir}/pki/tls/dovecot.cnf \
+        -keyout %{_sysconfdir}/pki/tls/private/dovecot.pem \
+        -out %{_sysconfdir}/pki/tls/certs/dovecot.pem
+    # enforce strict perms
+    chmod 600 %{_sysconfdir}/pki/tls/private/dovecot.pem
 fi
-exit 0
 
 %preun
 %_preun_service dovecot
@@ -174,9 +164,6 @@ rm -rf %{buildroot}
 %files
 %defattr(0755, root, root, 0755)
 %{_initrddir}/%{name}
-%dir %{_sysconfdir}/ssl/%{name}
-%dir %{_sysconfdir}/ssl/%{name}/certs
-%attr(0600,root,root) %dir %{_sysconfdir}/ssl/%{name}/private
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/*
 %{_sbindir}/*
@@ -187,8 +174,7 @@ rm -rf %{buildroot}
 %doc mboxcrypt.pl migration_wuimp_to_dovecot.pl
 %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
-%dir %{_sysconfdir}/pki/dovecot
-%config(noreplace) %{_sysconfdir}/pki/dovecot/dovecot-openssl.cnf
+%config(noreplace) %{_sysconfdir}/pki/tls/dovecot.cnf
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/*.la
 %{_datadir}/%{name}/*.so
