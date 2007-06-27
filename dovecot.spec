@@ -1,6 +1,6 @@
 %define name		dovecot
 %define version     1.0.1
-%define rel 1
+%define rel 2
 
 
 %global	with_ldap	0
@@ -87,6 +87,7 @@ This package have some configurable build options:
 %setup -q
 
 %build
+%serverbuild
 %configure \
 	--with-ssl=openssl \
 	--with-ssldir="%{_sysconfdir}/ssl/%{name}" \
