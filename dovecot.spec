@@ -1,6 +1,6 @@
 %define name		dovecot
-%define version     1.0.1
-%define rel 2
+%define version     1.0.2
+%define rel 1
 
 
 %global	with_ldap	0
@@ -40,7 +40,7 @@ BuildRequires:	openldap-devel
 BuildRequires:	libsasl-devel
 %endif
 %if %{with_mysql}
-BuildRequires:	mysql-devel
+BuildRequires:	libmysql-devel
 %endif
 %if %{with_pgsql}
 BuildRequires:	postgresql-devel
@@ -188,6 +188,3 @@ rm -rf %{buildroot}
 %defattr(0755, root, root, 0755)
 %{_datadir}/%{name}/*.a
 %{_datadir}/%{name}/imap/*.a
-
-
-
