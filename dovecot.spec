@@ -40,7 +40,7 @@ BuildRequires:	openldap-devel
 BuildRequires:	libsasl-devel
 %endif
 %if %{with_mysql}
-BuildRequires:	libmysql-devel
+BuildRequires:	mysql-devel
 %endif
 %if %{with_pgsql}
 BuildRequires:	postgresql-devel
