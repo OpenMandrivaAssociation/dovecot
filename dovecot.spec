@@ -1,8 +1,3 @@
-%define name		dovecot
-%define version     1.0.2
-%define rel 1
-
-
 %global	with_ldap	0
 %global	with_sasl	0
 %global	with_mysql	1
@@ -16,21 +11,23 @@
 # openssl-devel package is installed
 
 Summary:	Secure IMAP and POP3 server
-Name: 		%{name}
-Version:	%{version}
-Release:	%mkrel %rel
+Name: 		dovecot
+Version:	1.0.2
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://dovecot.org
 Source0:	http://dovecot.org/releases/%{name}-%{version}.tar.bz2
 Source1:	%{name}-pamd
 Source2:	%{name}-init
-Source4:    http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
-Source5:    http://dovecot.org/tools/mboxcrypt.pl
-BuildRoot: 	%{_tmppath}/root-%{name}-%{version}
-Provides:       imap-server pop3-server
-Provides:		imaps-server pop3s-server
-Prereq:         rpm-helper
+Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
+Source5:	http://dovecot.org/tools/mboxcrypt.pl
+Provides:	imap-server pop3-server
+Provides:	imaps-server pop3s-server
+Requires(post): rpm-helper
+Requires(preun): rpm-helper
+Requires(pre): rpm-helper
+Requires(postun): rpm-helper
 BuildRequires:	pam-devel
 BuildRequires:	openssl-devel
 %if %{with_ldap}
@@ -45,73 +42,71 @@ BuildRequires:	mysql-devel
 %if %{with_pgsql}
 BuildRequires:	postgresql-devel
 %endif
+BuildRoot:	%{_tmppath}/root-%{name}-%{version}
 
 %description 
-Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems,
-written with security primarily in mind. Although it's written with C,
-it uses several coding techniques to avoid most of the common
-pitfalls.
+Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems, written with
+security primarily in mind. Although it's written with C, it uses several
+coding techniques to avoid most of the common pitfalls.
 
 Dovecot can work with standard mbox and maildir formats and it's fully
-compatible with UW-IMAP and Courier IMAP servers as well as mail
-clients accessing the mailboxes directly.
+compatible with UW-IMAP and Courier IMAP servers as well as mail clients
+accessing the mailboxes directly.
 
 This package have some configurable build options:
---without ldap	- build without LDAP support which is by default enabled
---with sasl	- build with Cyrus SASL 2 library support
---with mysql	- build with MySQL support
---with pgsql	- build with PostgreSQL support
 
-%package devel
+ --without ldap	- build without LDAP support which is by default enabled
+ --with sasl	- build with Cyrus SASL 2 library support
+ --with mysql	- build with MySQL support (default)
+ --with pgsql	- build with PostgreSQL support
+
+%package	devel
 Summary:	Devel files for Dovecot IMAP and POP3 server
-Group: 		System/Servers
-Prereq:		rpm-helper
+Group:		Development/C
 
-%description devel
-Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems,
-written with security primarily in mind. Although it's written with C,
-it uses several coding techniques to avoid most of the common
-pitfalls.
+%description	devel
+Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems, written with
+security primarily in mind. Although it's written with C, it uses several
+coding techniques to avoid most of the common pitfalls.
 
 Dovecot can work with standard mbox and maildir formats and it's fully
-compatible with UW-IMAP and Courier IMAP servers as well as mail
-clients accessing the mailboxes directly.
+compatible with UW-IMAP and Courier IMAP servers as well as mail clients
+accessing the mailboxes directly.
 
-This package have some configurable build options:
---without ldap	- build without LDAP support which is by default enabled
---with sasl	- build with Cyrus SASL 2 library support
---with mysql	- build with MySQL support
---with pgsql	- build with PostgreSQL support
+This package contains development files for dovecot.
 
 %prep
+
 %setup -q
 
 %build
 %serverbuild
 %configure \
-	--with-ssl=openssl \
-	--with-ssldir="%{_sysconfdir}/ssl/%{name}" \
+    --with-ssl=openssl \
+    --with-ssldir="%{_sysconfdir}/ssl/%{name}" \
     --with-moduledir="%{_datadir}/%{name}/" \
 %if %{with_ldap}
-	--with-ldap \
+    --with-ldap \
 %endif
 %if %{with_pgsql}
     --with-sql \
-	--with-pgsql \
+    --with-pgsql \
 %endif
 %if %{with_mysql}
     --with-sql \
-	--with-mysql \
+    --with-mysql \
 %endif
 %if %{with_sasl}
-	--with-cyrus-sasl2 \
+    --with-cyrus-sasl2 \
 %endif
 
 %make
 
 %install
 rm -rf %{buildroot}
+
 mkdir -p %{buildroot}%{_datadir}/%{name}
+
 %makeinstall_std
 mkdir -p %{buildroot}%{_sysconfdir}/pam.d \
 	%{buildroot}%{_initrddir} \
@@ -133,7 +128,6 @@ rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 %pre
 %_pre_useradd dovecot %{_var}/%{_lib}/%{name} /bin/false
 %_pre_groupadd dovecot dovecot
-
 
 %post
 %_post_service dovecot
