@@ -2,18 +2,20 @@
 %global	with_sasl	0
 %global	with_mysql	1
 %global	with_pgsql	0
+%global	with_gssapi	1
 %{?_without_ldap: %{expand: %%global with_ldap 0}}
 %{?_with_sasl: %{expand: %%global with_sasl 1}}
 %{?_with_mysql: %{expand: %%global with_mysql 1}}
 %{?_with_pgsql: %{expand: %%global with_pgsql 1}}
+%{?_without_gssapi: %{expand: %%global with_gssapi 0}}
 # TODO
-# add configurable ssl support, unfortunatelly --without-ssl doesn't work if
+# add configurable ssl support, unfortunately --without-ssl doesn't work if
 # openssl-devel package is installed
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.0.2
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -42,6 +44,9 @@ BuildRequires:	mysql-devel
 %if %{with_pgsql}
 BuildRequires:	postgresql-devel
 %endif
+%if %{with_gssapi}
+BuildRequires:	gssapi-devel
+%endif
 BuildRoot:	%{_tmppath}/root-%{name}-%{version}
 
 %description 
@@ -53,12 +58,13 @@ Dovecot can work with standard mbox and maildir formats and it's fully
 compatible with UW-IMAP and Courier IMAP servers as well as mail clients
 accessing the mailboxes directly.
 
-This package have some configurable build options:
+This package has some configurable build options:
 
- --without ldap	- build without LDAP support which is by default enabled
- --with sasl	- build with Cyrus SASL 2 library support
- --with mysql	- build with MySQL support (default)
- --with pgsql	- build with PostgreSQL support
+ --without ldap		- build without LDAP support which is by default enabled
+ --with sasl		- build with Cyrus SASL 2 library support
+ --with mysql		- build with MySQL support (default)
+ --with pgsql		- build with PostgreSQL support
+ --without gssapi	- build without GSSAPI authentication support
 
 %package	devel
 Summary:	Devel files for Dovecot IMAP and POP3 server
@@ -99,7 +105,9 @@ This package contains development files for dovecot.
 %if %{with_sasl}
     --with-cyrus-sasl2 \
 %endif
-
+%if %{with_gssapi}
+    --with-gssapi
+%endif
 %make
 
 %install
