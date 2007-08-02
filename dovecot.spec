@@ -15,8 +15,8 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.0.2
-Release:	%mkrel 3
-License:	GPL
+Release:	%mkrel 4
+License:	MIT and LGPLv2 and BSD-like and Public Domain 
 Group:		System/Servers
 URL:		http://dovecot.org
 Source0:	http://dovecot.org/releases/%{name}-%{version}.tar.bz2
@@ -46,6 +46,7 @@ BuildRequires:	postgresql-devel
 %endif
 %if %{with_gssapi}
 BuildRequires:	gssapi-devel
+BuildRequires:	krb5-devel
 %endif
 BuildRoot:	%{_tmppath}/root-%{name}-%{version}
 
