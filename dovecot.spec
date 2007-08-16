@@ -15,7 +15,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.0.3
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	MIT and LGPLv2 and BSD-like and Public Domain 
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -27,10 +27,10 @@ Source5:	http://dovecot.org/tools/mboxcrypt.pl
 Patch:		dovecot-conf-ssl.patch
 Provides:	imap-server pop3-server
 Provides:	imaps-server pop3s-server
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
-Requires(pre): rpm-helper
-Requires(postun): rpm-helper
+Requires(pre):	rpm-helper >= 0.19
+Requires(post):	rpm-helper >= 0.19
+Requires(preun):	rpm-helper >= 0.19
+Requires(postun):	rpm-helper >= 0.19
 BuildRequires:	pam-devel
 BuildRequires:	openssl-devel
 %if %{with_ldap}
@@ -49,7 +49,8 @@ BuildRequires:	postgresql-devel
 BuildRequires:	gssapi-devel
 BuildRequires:	krb5-devel
 %endif
-BuildRoot:	%{_tmppath}/root-%{name}-%{version}
+BuildRequires:  rpm-helper >= 0.19
+BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description 
 Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems, written with
@@ -126,9 +127,6 @@ mkdir -p %{buildroot}%{_sysconfdir}/pam.d \
 cat %{SOURCE1} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
 cat %{SOURCE2} > %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
-# Bug #27561 - AdamW 2007/06
-mkdir -p %{buildroot}%{_sysconfdir}/pki/tls
-cp doc/dovecot-openssl.cnf %{buildroot}%{_sysconfdir}/pki/tls/dovecot.cnf
 cp %{SOURCE4} .
 cp %{SOURCE5} . 
 # placed in doc
@@ -143,21 +141,7 @@ rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 
 %post
 %_post_service dovecot
-
-# TODO
-# move this somewhere else, because these commands is "dangerous" as rpmlint say
-#
-# create a ssl cert
-# generate SSL cert if needed
-if [ $1 = 1 ]; then
-# Bug #27561
-    openssl req -new -x509 -days 365 -nodes \
-        -config %{_sysconfdir}/pki/tls/dovecot.cnf \
-        -keyout %{_sysconfdir}/pki/tls/private/dovecot.pem \
-        -out %{_sysconfdir}/pki/tls/certs/dovecot.pem
-    # enforce strict perms
-    chmod 600 %{_sysconfdir}/pki/tls/private/dovecot.pem
-fi
+%create_ssl_certificate dovecot false
 
 %preun
 %_preun_service dovecot
@@ -182,7 +166,6 @@ rm -rf %{buildroot}
 %doc mboxcrypt.pl migration_wuimp_to_dovecot.pl
 %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
-%config(noreplace) %{_sysconfdir}/pki/tls/dovecot.cnf
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/*.la
 %{_datadir}/%{name}/*.so
