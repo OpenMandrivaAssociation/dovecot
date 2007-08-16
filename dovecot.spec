@@ -1,13 +1,13 @@
-%global	with_ldap	0
-%global	with_sasl	0
+%global	with_ldap	1
 %global	with_mysql	1
-%global	with_pgsql	0
 %global	with_gssapi	1
+%global	with_sasl	0
+%global	with_pgsql	0
 %{?_without_ldap: %{expand: %%global with_ldap 0}}
-%{?_with_sasl: %{expand: %%global with_sasl 1}}
-%{?_with_mysql: %{expand: %%global with_mysql 1}}
-%{?_with_pgsql: %{expand: %%global with_pgsql 1}}
+%{?_without_mysql: %{expand: %%global with_mysql 0}}
 %{?_without_gssapi: %{expand: %%global with_gssapi 0}}
+%{?_with_sasl: %{expand: %%global with_sasl 1}}
+%{?_with_pgsql: %{expand: %%global with_pgsql 1}}
 # TODO
 # add configurable ssl support, unfortunately --without-ssl doesn't work if
 # openssl-devel package is installed
@@ -61,11 +61,11 @@ accessing the mailboxes directly.
 
 This package has some configurable build options:
 
- --without ldap		- build without LDAP support which is by default enabled
+ --without ldap		- build without LDAP (default enabled)
+ --without mysql	- build without MySQL support (default enabled)
+ --without gssapi	- build without GSSAPI support (default enabled)
  --with sasl		- build with Cyrus SASL 2 library support
- --with mysql		- build with MySQL support (default)
  --with pgsql		- build with PostgreSQL support
- --without gssapi	- build without GSSAPI authentication support
 
 %package	devel
 Summary:	Devel files for Dovecot IMAP and POP3 server
