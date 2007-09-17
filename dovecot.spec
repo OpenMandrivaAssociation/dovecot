@@ -14,14 +14,15 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	1.0.3
-Release:	%mkrel 4
+Version:	1.0.5
+Release:	%mkrel 1
 License:	MIT and LGPLv2 and BSD-like and Public Domain 
 Group:		System/Servers
 URL:		http://dovecot.org
-Source0:	http://dovecot.org/releases/%{name}-%{version}.tar.bz2
-Source1:	%{name}-pamd
-Source2:	%{name}-init
+Source0:	http://dovecot.org/releases/%{name}-%{version}.tar.gz
+Source1:	http://dovecot.org/releases/%{name}-%{version}.tar.gz.sig
+Source2:	%{name}-pamd
+Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
 Patch:		dovecot-conf-ssl.patch
@@ -46,7 +47,7 @@ BuildRequires:	mysql-devel
 BuildRequires:	postgresql-devel
 %endif
 %if %{with_gssapi}
-BuildRequires:	gssapi-devel
+BuildRequires:	gssglue-devel
 BuildRequires:	krb5-devel
 %endif
 BuildRequires:  rpm-helper >= 0.19
@@ -124,8 +125,8 @@ mkdir -p %{buildroot}%{_datadir}/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/pam.d \
 	%{buildroot}%{_initrddir} \
 	%{buildroot}%{_var}/%{_lib}/%{name}
-cat %{SOURCE1} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
-cat %{SOURCE2} > %{buildroot}%{_initrddir}/%{name}
+cat %{SOURCE2} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
+cat %{SOURCE3} > %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
 cp %{SOURCE4} .
 cp %{SOURCE5} . 
