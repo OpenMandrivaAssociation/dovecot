@@ -14,9 +14,9 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	1.0.8
+Version:	1.0.9
 Release:	%mkrel 1
-License:	MIT and LGPLv2 and BSD-like and Public Domain 
+License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
 Source0:	http://dovecot.org/releases/%{name}-%{version}.tar.gz
@@ -53,7 +53,7 @@ BuildRequires:	krb5-devel
 BuildRequires:  rpm-helper >= 0.19
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
-%description 
+%description
 Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems, written with
 security primarily in mind. Although it's written with C, it uses several
 coding techniques to avoid most of the common pitfalls.
@@ -129,7 +129,7 @@ cat %{SOURCE2} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
 cat %{SOURCE3} > %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
 cp %{SOURCE4} .
-cp %{SOURCE5} . 
+cp %{SOURCE5} .
 # placed in doc
 rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 
