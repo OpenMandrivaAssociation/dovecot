@@ -51,6 +51,7 @@ BuildRequires:	gssglue-devel
 BuildRequires:	krb5-devel
 %endif
 BuildRequires:  rpm-helper >= 0.19
+BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
 Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems, written with
