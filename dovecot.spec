@@ -15,7 +15,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.0.10
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -25,6 +25,8 @@ Source2:	%{name}-pamd
 Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
+# sieve plugin. Must be updated when minor version increases.
+Source6:	%{name}-sieve-1.0.2.tar.gz
 Patch:		dovecot-conf-ssl.patch
 Provides:	imap-server pop3-server
 Provides:	imaps-server pop3s-server
@@ -87,13 +89,13 @@ This package contains development files for dovecot.
 
 %prep
 
-%setup -q
+%setup -q -a 6
 # Bug #27491
 %patch -p1 -b .sslfix
 
 %build
 %serverbuild
-%configure \
+%configure2_5x \
     --with-ssl=openssl \
     --with-ssldir="%{_sysconfdir}/ssl/%{name}" \
     --with-moduledir="%{_datadir}/%{name}/" \
@@ -116,12 +118,21 @@ This package contains development files for dovecot.
 %endif
 %make
 
+#build sieve plugin
+pushd dovecot-sieve-1.0.2
+%configure2_5x --with-dovecot=../
+%make
+popd
+
 %install
 rm -rf %{buildroot}
 
 mkdir -p %{buildroot}%{_datadir}/%{name}
 
 %makeinstall_std
+pushd dovecot-sieve-1.0.2
+%makeinstall_std
+popd
 mkdir -p %{buildroot}%{_sysconfdir}/pam.d \
 	%{buildroot}%{_initrddir} \
 	%{buildroot}%{_var}/%{_lib}/%{name}
@@ -172,6 +183,7 @@ rm -rf %{buildroot}
 %{_datadir}/%{name}/*.so
 %{_datadir}/%{name}/pop3/*.so
 %{_datadir}/%{name}/lda/*.so
+%{_datadir}/%{name}/lda/*.*a
 %{_datadir}/%{name}/imap/*.so
 %{_datadir}/%{name}/imap/*.la
 
