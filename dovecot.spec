@@ -34,7 +34,6 @@ Requires(pre):	rpm-helper >= 0.21
 Requires(post):	rpm-helper >= 0.19
 Requires(preun):	rpm-helper >= 0.19
 Requires(postun):	rpm-helper >= 0.19
-BuildRequires:	rpm-helper >= 0.21
 BuildRequires:	pam-devel
 BuildRequires:	openssl-devel
 %if %{with_ldap}
@@ -53,7 +52,7 @@ BuildRequires:	postgresql-devel
 BuildRequires:	gssglue-devel
 BuildRequires:	krb5-devel
 %endif
-BuildRequires:  rpm-helper >= 0.19
+BuildRequires:  rpm-helper >= 0.21
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
