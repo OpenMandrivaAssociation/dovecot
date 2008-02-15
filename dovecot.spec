@@ -15,7 +15,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.0.10
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -34,6 +34,7 @@ Requires(pre):	rpm-helper >= 0.21
 Requires(post):	rpm-helper >= 0.19
 Requires(preun):	rpm-helper >= 0.19
 Requires(postun):	rpm-helper >= 0.19
+BuildRequires:	rpm-helper >= 0.21
 BuildRequires:	pam-devel
 BuildRequires:	openssl-devel
 %if %{with_ldap}
