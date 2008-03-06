@@ -15,7 +15,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.0.12
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -176,7 +176,7 @@ rm -rf %{buildroot}
 %doc AUTHORS ChangeLog COPYING* NEWS README TODO
 %doc doc/*.conf doc/*.sh doc/*.txt doc/*.cnf
 %doc mboxcrypt.pl migration_wuimp_to_dovecot.pl
-%config(noreplace) %{_sysconfdir}/dovecot.conf
+%attr(0640,root,root) %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/*.la
