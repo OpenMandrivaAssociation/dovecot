@@ -14,7 +14,7 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	1.0.13
+Version:	1.0.14
 Release:	%mkrel 1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -53,7 +53,7 @@ BuildRequires:	gssglue-devel
 BuildRequires:	krb5-devel
 %endif
 BuildRequires:  rpm-helper >= 0.21
-BuildRoot:	%{_tmppath}/%{name}-%{version}
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems, written with
