@@ -1,21 +1,34 @@
-%global	with_ldap	1
-%global	with_mysql	1
-%global	with_gssapi	1
-%global	with_sasl	0
-%global	with_pgsql	0
-%{?_without_ldap: %{expand: %%global with_ldap 0}}
-%{?_without_mysql: %{expand: %%global with_mysql 0}}
-%{?_without_gssapi: %{expand: %%global with_gssapi 0}}
-%{?_with_sasl: %{expand: %%global with_sasl 1}}
-%{?_with_pgsql: %{expand: %%global with_pgsql 1}}
+%define build_gssapi 1
+%define build_ldap 1
+%define build_lucene 0
+%define build_mysql 1
+%define build_nss 0
+%define build_pgsql 0
+%define build_sasl 0
+
+%{?_with_gssapi: %{expand: %%global build_gssapi 1}}
+%{?_without_gssapi: %{expand: %%global build_gssapi 0}}
+%{?_with_ldap: %{expand: %%global build_ldap 1}}
+%{?_without_ldap: %{expand: %%global build_ldap 0}}
+%{?_with_lucene: %{expand: %%global build_lucene 1}}
+%{?_without_lucene: %{expand: %%global build_lucene 0}}
+%{?_with_mysql: %{expand: %%global build_mysql 1}}
+%{?_without_mysql: %{expand: %%global build_mysql 0}}
+%{?_with_nss: %{expand: %%global build_nss 1}}
+%{?_without_nss: %{expand: %%global build_nss 0}}
+%{?_with_pgsql: %{expand: %%global build_pgsql 1}}
+%{?_without_pgsql: %{expand: %%global build_pgsql 0}}
+%{?_with_sasl: %{expand: %%global build_sasl 1}}
+%{?_without_sasl: %{expand: %%global build_sasl 0}}
+
 # TODO
 # add configurable ssl support, unfortunately --without-ssl doesn't work if
 # openssl-devel package is installed
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	1.0.14
-Release:	%mkrel 1
+Version:	1.1.1
+Release:	%mkrel 0.1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -26,29 +39,35 @@ Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
 # sieve plugin. Must be updated when minor version increases.
-Source6:	%{name}-sieve-1.0.2.tar.gz
+Source6:	http://www.dovecot.org/releases/sieve/dovecot-sieve-1.1.5.tar.gz
 Patch:		dovecot-conf-ssl.patch
 Provides:	imap-server pop3-server
 Provides:	imaps-server pop3s-server
 Requires(pre):	rpm-helper >= 0.21
 Requires(post):	rpm-helper >= 0.19
-Requires(preun):	rpm-helper >= 0.19
-Requires(postun):	rpm-helper >= 0.19
+Requires(preun): rpm-helper >= 0.19
+Requires(postun): rpm-helper >= 0.19
 BuildRequires:	pam-devel
 BuildRequires:	openssl-devel
-%if %{with_ldap}
+%if %{build_ldap}
 BuildRequires:	openldap-devel
 %endif
-%if %{with_sasl}
+%if %{build_lucene}
+BuildRequires:	lucene-devel
+%endif
+%if %{build_nss}
+BuildRequires:	nss-devel
+%endif
+%if %{build_sasl}
 BuildRequires:	libsasl-devel
 %endif
-%if %{with_mysql}
+%if %{build_mysql}
 BuildRequires:	mysql-devel
 %endif
-%if %{with_pgsql}
+%if %{build_pgsql}
 BuildRequires:	postgresql-devel
 %endif
-%if %{with_gssapi}
+%if %{build_gssapi}
 BuildRequires:	gssglue-devel
 BuildRequires:	krb5-devel
 %endif
@@ -64,13 +83,32 @@ Dovecot can work with standard mbox and maildir formats and it's fully
 compatible with UW-IMAP and Courier IMAP servers as well as mail clients
 accessing the mailboxes directly.
 
-This package has some configurable build options:
+You can build %{name} with some conditional build swithes;
 
- --without ldap		- build without LDAP (default enabled)
- --without mysql	- build without MySQL support (default enabled)
- --without gssapi	- build without GSSAPI support (default enabled)
- --with sasl		- build with Cyrus SASL 2 library support
- --with pgsql		- build with PostgreSQL support
+(ie. use with rpm --rebuild):
+
+    --with[out] gssapi	GSSAPI support (enabled)
+    --with[out] ldap	LDAP support (enabled)
+    --with[out] lucene	Lucene support (disabled)
+    --with[out] nss	NSS support (disabled)
+    --with[out] mysql	MySQL support (enabled)
+    --with[out] pgsql	PostgreSQL support (disabled)
+    --with[out] sasl	Cyrus SASL 2 library support (disabled)
+
+
+%package	plugins-ldap
+Summary:	LDAP support for dovecot
+Group:		System/Servers
+
+%description	plugins-ldap
+This package provides LDAP capabilities to dovecot in a modular form.
+
+%package	plugins-gssapi
+Summary:	GSSAPI support for dovecot
+Group:		System/Servers
+
+%description	plugins-gssapi
+This package provides GSSAPI capabilities to dovecot in a modular form.
 
 %package	devel
 Summary:	Devel files for Dovecot IMAP and POP3 server
@@ -95,31 +133,39 @@ This package contains development files for dovecot.
 
 %build
 %serverbuild
+
 %configure2_5x \
     --with-ssl=openssl \
     --with-ssldir="%{_sysconfdir}/ssl/%{name}" \
-    --with-moduledir="%{_datadir}/%{name}/" \
-%if %{with_ldap}
-    --with-ldap \
+    --with-moduledir=%{_libdir}/%{name}/modules \
+%if %{build_nss}
+    --with-nss \
 %endif
-%if %{with_pgsql}
+%if %{build_ldap}
+    --with-ldap=plugin \
+%endif
+%if %{build_pgsql}
     --with-sql \
     --with-pgsql \
 %endif
-%if %{with_mysql}
+%if %{build_mysql}
     --with-sql \
     --with-mysql \
 %endif
-%if %{with_sasl}
+%if %{build_sasl}
     --with-cyrus-sasl2 \
 %endif
-%if %{with_gssapi}
-    --with-gssapi
+%if %{build_gssapi}
+    --with-gssapi=plugin \
 %endif
+%if %{build_lucene}
+    --with-lucene \
+%endif
+
 %make
 
 #build sieve plugin
-pushd dovecot-sieve-1.0.2
+pushd dovecot-sieve-*
 %configure2_5x --with-dovecot=../
 %make
 popd
@@ -127,20 +173,24 @@ popd
 %install
 rm -rf %{buildroot}
 
-mkdir -p %{buildroot}%{_datadir}/%{name}
+mkdir -p %{buildroot}%{_libdir}/%{name}/modules
 
 %makeinstall_std
-pushd dovecot-sieve-1.0.2
+
+pushd dovecot-sieve-*
 %makeinstall_std
 popd
+
 mkdir -p %{buildroot}%{_sysconfdir}/pam.d \
 	%{buildroot}%{_initrddir} \
 	%{buildroot}%{_var}/%{_lib}/%{name}
+
 cat %{SOURCE2} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
 cat %{SOURCE3} > %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
 cp %{SOURCE4} .
 cp %{SOURCE5} .
+
 # placed in doc
 rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 
@@ -166,28 +216,52 @@ rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 rm -rf %{buildroot}
 
 %files
-%defattr(0755, root, root, 0755)
-%{_initrddir}/%{name}
-%dir %{_libdir}/%{name}
-%{_libdir}/%{name}/*
-%{_sbindir}/*
-%attr(0700,root,root) %dir %{_var}/%{_lib}/%{name}
-%defattr(0644,root,root,0755)
+%defattr(-,root,root)
 %doc AUTHORS ChangeLog COPYING* NEWS README TODO
 %doc doc/*.conf doc/*.sh doc/*.txt doc/*.cnf
 %doc mboxcrypt.pl migration_wuimp_to_dovecot.pl
+%{_initrddir}/%{name}
 %attr(0640,root,root) %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/*.la
-%{_datadir}/%{name}/*.so
-%{_datadir}/%{name}/pop3/*.so
-%{_datadir}/%{name}/lda/*.so
-%{_datadir}/%{name}/lda/*.*a
-%{_datadir}/%{name}/imap/*.so
-%{_datadir}/%{name}/imap/*.la
+%{_sbindir}/*
+%dir %{_libdir}/%{name}
+%{_libdir}/%{name}/checkpassword-reply
+%{_libdir}/%{name}/convert-tool
+%{_libdir}/%{name}/deliver
+%{_libdir}/%{name}/dict
+%{_libdir}/%{name}/dovecot-auth
+%{_libdir}/%{name}/expire-tool
+%{_libdir}/%{name}/gdbhelper
+%{_libdir}/%{name}/idxview
+%{_libdir}/%{name}/imap
+%{_libdir}/%{name}/imap-login
+%{_libdir}/%{name}/listview
+%{_libdir}/%{name}/logview
+%{_libdir}/%{name}/pop3
+%{_libdir}/%{name}/pop3-login
+%{_libdir}/%{name}/rawlog
+%{_libdir}/%{name}/sievec
+%{_libdir}/%{name}/sieved
+%{_libdir}/%{name}/ssl-build-param
+
+%dir %{_libdir}/%{name}/modules
+%{_libdir}/%{name}/modules/*.so
+%{_libdir}/%{name}/modules/pop3/*.so
+%{_libdir}/%{name}/modules/lda/*.so
+%{_libdir}/%{name}/modules/imap/*.so
+%attr(0700,root,root) %dir %{_var}/%{_lib}/%{name}
 
 %files devel
 %defattr(0755, root, root, 0755)
-%{_datadir}/%{name}/*.a
-%{_datadir}/%{name}/imap/*.a
+%{_libdir}/%{name}/modules/*.*a
+%{_libdir}/%{name}/modules/imap/*.*a
+%{_libdir}/%{name}/modules/auth/*.*a
+%{_libdir}/%{name}/modules/lda/*.*a
+
+%files plugins-ldap
+%defattr(-,root,root)
+%{_libdir}/%{name}/modules/auth/libauthdb_ldap.so
+
+%files plugins-gssapi
+%defattr(-,root,root)
+%{_libdir}/%{name}/modules/auth/libmech_gssapi.so
