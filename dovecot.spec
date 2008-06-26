@@ -1,10 +1,9 @@
 %define build_gssapi 1
 %define build_ldap 1
-%define build_lucene 0
+%define build_lucene 1
 %define build_mysql 1
-%define build_nss 0
-%define build_pgsql 0
-%define build_sasl 0
+%define build_pgsql 1
+%define build_sasl 1
 
 %{?_with_gssapi: %{expand: %%global build_gssapi 1}}
 %{?_without_gssapi: %{expand: %%global build_gssapi 0}}
@@ -14,8 +13,6 @@
 %{?_without_lucene: %{expand: %%global build_lucene 0}}
 %{?_with_mysql: %{expand: %%global build_mysql 1}}
 %{?_without_mysql: %{expand: %%global build_mysql 0}}
-%{?_with_nss: %{expand: %%global build_nss 1}}
-%{?_without_nss: %{expand: %%global build_nss 0}}
 %{?_with_pgsql: %{expand: %%global build_pgsql 1}}
 %{?_without_pgsql: %{expand: %%global build_pgsql 0}}
 %{?_with_sasl: %{expand: %%global build_sasl 1}}
@@ -28,7 +25,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.1.1
-Release:	%mkrel 0.1
+Release:	%mkrel 0.2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -53,10 +50,7 @@ BuildRequires:	openssl-devel
 BuildRequires:	openldap-devel
 %endif
 %if %{build_lucene}
-BuildRequires:	lucene-devel
-%endif
-%if %{build_nss}
-BuildRequires:	nss-devel
+BuildRequires:	clucene-devel
 %endif
 %if %{build_sasl}
 BuildRequires:	libsasl-devel
@@ -89,30 +83,35 @@ You can build %{name} with some conditional build swithes;
 
     --with[out] gssapi	GSSAPI support (enabled)
     --with[out] ldap	LDAP support (enabled)
-    --with[out] lucene	Lucene support (disabled)
-    --with[out] nss	NSS support (disabled)
+    --with[out] lucene	Lucene support (enabled)
     --with[out] mysql	MySQL support (enabled)
-    --with[out] pgsql	PostgreSQL support (disabled)
-    --with[out] sasl	Cyrus SASL 2 library support (disabled)
+    --with[out] pgsql	PostgreSQL support (enabled)
+    --with[out] sasl	Cyrus SASL 2 library support (enabled)
 
-
+%if %{build_ldap}
 %package	plugins-ldap
 Summary:	LDAP support for dovecot
 Group:		System/Servers
+Requires:	%{name} = %{version}
 
 %description	plugins-ldap
 This package provides LDAP capabilities to dovecot in a modular form.
+%endif
 
+%if %{build_gssapi}
 %package	plugins-gssapi
 Summary:	GSSAPI support for dovecot
 Group:		System/Servers
+Requires:	%{name} = %{version}
 
 %description	plugins-gssapi
 This package provides GSSAPI capabilities to dovecot in a modular form.
+%endif
 
 %package	devel
 Summary:	Devel files for Dovecot IMAP and POP3 server
 Group:		Development/C
+Requires:	%{name} = %{version}
 
 %description	devel
 Dovecot is an IMAP and POP3 server for Linux/UNIX-like systems, written with
@@ -136,11 +135,9 @@ This package contains development files for dovecot.
 
 %configure2_5x \
     --with-ssl=openssl \
-    --with-ssldir="%{_sysconfdir}/ssl/%{name}" \
+    --with-ssldir=%{_sysconfdir}/ssl/%{name} \
     --with-moduledir=%{_libdir}/%{name}/modules \
-%if %{build_nss}
     --with-nss \
-%endif
 %if %{build_ldap}
     --with-ldap=plugin \
 %endif
@@ -173,17 +170,16 @@ popd
 %install
 rm -rf %{buildroot}
 
-mkdir -p %{buildroot}%{_libdir}/%{name}/modules
+install -d %{buildroot}%{_sysconfdir}/pam.d
+install -d %{buildroot}%{_initrddir}
+install -d %{buildroot}%{_libdir}/%{name}/modules
+install -d %{buildroot}/var/lib/%{name}
 
 %makeinstall_std
 
 pushd dovecot-sieve-*
 %makeinstall_std
 popd
-
-mkdir -p %{buildroot}%{_sysconfdir}/pam.d \
-	%{buildroot}%{_initrddir} \
-	%{buildroot}%{_var}/%{_lib}/%{name}
 
 cat %{SOURCE2} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
 cat %{SOURCE3} > %{buildroot}%{_initrddir}/%{name}
@@ -198,7 +194,7 @@ rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 
 %pre
-%_pre_useradd dovecot %{_var}/%{_lib}/%{name} /bin/false
+%_pre_useradd dovecot /var/lib/%{name} /bin/false
 %_pre_groupadd dovecot dovecot
 
 %post
@@ -211,6 +207,22 @@ rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 %postun
 %_postun_userdel dovecot
 %_postun_groupdel dovecot
+
+%post plugins-ldap
+%{_initrddir}/%{name} condrestart > /dev/null 2>&1 || :
+
+%postun plugins-ldap
+if [ "$1" = "0" ]; then
+    %{_initrddir}/%{name} condrestart > /dev/null 2>&1 || :
+fi
+
+%post plugins-gssapi
+%{_initrddir}/%{name} condrestart > /dev/null 2>&1 || :
+
+%postun plugins-gssapi
+if [ "$1" = "0" ]; then
+    %{_initrddir}/%{name} condrestart > /dev/null 2>&1 || :
+fi
 
 %clean
 rm -rf %{buildroot}
@@ -243,13 +255,12 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/sievec
 %{_libdir}/%{name}/sieved
 %{_libdir}/%{name}/ssl-build-param
-
 %dir %{_libdir}/%{name}/modules
 %{_libdir}/%{name}/modules/*.so
 %{_libdir}/%{name}/modules/pop3/*.so
 %{_libdir}/%{name}/modules/lda/*.so
 %{_libdir}/%{name}/modules/imap/*.so
-%attr(0700,root,root) %dir %{_var}/%{_lib}/%{name}
+%attr(0700,root,root) %dir /var/lib/%{name}
 
 %files devel
 %defattr(0755, root, root, 0755)
@@ -258,10 +269,14 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/modules/auth/*.*a
 %{_libdir}/%{name}/modules/lda/*.*a
 
+%if %{build_ldap}
 %files plugins-ldap
 %defattr(-,root,root)
 %{_libdir}/%{name}/modules/auth/libauthdb_ldap.so
+%endif
 
+%if %{build_gssapi}
 %files plugins-gssapi
 %defattr(-,root,root)
 %{_libdir}/%{name}/modules/auth/libmech_gssapi.so
+%endif
