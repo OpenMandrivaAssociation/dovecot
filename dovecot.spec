@@ -29,8 +29,8 @@ Release:	%mkrel 0.2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
-Source0:	http://dovecot.org/releases/%{name}-%{version}.tar.gz
-Source1:	http://dovecot.org/releases/%{name}-%{version}.tar.gz.sig
+Source0:	http://dovecot.org/releases/1.1/%{name}-%{version}.tar.gz
+Source1:	http://dovecot.org/releases/1.1/%{name}-%{version}.tar.gz.sig
 Source2:	%{name}-pamd
 Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
