@@ -183,6 +183,7 @@ popd
 
 cat %{SOURCE2} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
 cat %{SOURCE3} > %{buildroot}%{_initrddir}/%{name}
+chmod 0700 %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
 cp %{SOURCE4} .
 cp %{SOURCE5} .
@@ -232,7 +233,7 @@ rm -rf %{buildroot}
 %doc AUTHORS ChangeLog COPYING* NEWS README TODO
 %doc doc/*.conf doc/*.sh doc/*.txt doc/*.cnf
 %doc mboxcrypt.pl migration_wuimp_to_dovecot.pl
-%{_initrddir}/%{name}
+%attr(0700,root,root) %{_initrddir}/%{name}
 %attr(0640,root,root) %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %{_sbindir}/*
