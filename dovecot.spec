@@ -25,7 +25,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.1.4
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -194,6 +194,13 @@ rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 # Clean up buildroot
 rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 
+# to preserve security of the ssl password which may be in the config
+# file but also allow the use of the 'deliver' command as any user,
+# we set the 'deliver' command sgid mail and have the config file owned
+# by root.mail. See bug #44926. idea from Josh Bressers at Red Hat.
+# - AdamW 2008/10
+chmod g+s %{buildroot}%{_libdir}/%{name}/deliver
+
 %pre
 %_pre_useradd dovecot /var/lib/%{name} /bin/false
 %_pre_groupadd dovecot dovecot
@@ -234,7 +241,7 @@ rm -rf %{buildroot}
 %doc doc/*.conf doc/*.sh doc/*.txt doc/*.cnf
 %doc mboxcrypt.pl migration_wuimp_to_dovecot.pl
 %attr(0755,root,root) %{_initrddir}/%{name}
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/dovecot.conf
+%attr(0640,root,mail) %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %{_sbindir}/*
 %dir %{_libdir}/%{name}
