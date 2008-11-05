@@ -25,7 +25,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.1.6
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -194,13 +194,6 @@ rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 # Clean up buildroot
 rm -rf %{buildroot}%{_datadir}/doc/dovecot/
 
-# to preserve security of the ssl password which may be in the config
-# file but also allow the use of the 'deliver' command as any user,
-# we set the 'deliver' command sgid mail and have the config file owned
-# by root.mail. See bug #44926. idea from Josh Bressers at Red Hat.
-# - AdamW 2008/10
-chmod g+s %{buildroot}%{_libdir}/%{name}/deliver
-
 %pre
 %_pre_useradd dovecot /var/lib/%{name} /bin/false
 %_pre_groupadd dovecot dovecot
@@ -236,6 +229,11 @@ fi
 rm -rf %{buildroot}
 
 %files
+# to preserve security of the ssl password which may be in the config
+# file but also allow the use of the 'deliver' command as any user,
+# we set the 'deliver' command sgid mail and have the config file owned
+# by root.mail. See bug #44926. idea from Josh Bressers at Red Hat.
+# - AdamW 2008/10
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog COPYING* NEWS README TODO
 %doc doc/*.conf doc/*.sh doc/*.txt doc/*.cnf
@@ -247,7 +245,7 @@ rm -rf %{buildroot}
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/checkpassword-reply
 %{_libdir}/%{name}/convert-tool
-%attr(0755,root,mail) %{_libdir}/%{name}/deliver
+%attr(2755,root,mail) %{_libdir}/%{name}/deliver
 %{_libdir}/%{name}/dict
 %{_libdir}/%{name}/dovecot-auth
 %{_libdir}/%{name}/expire-tool
