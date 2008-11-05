@@ -25,7 +25,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.1.4
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -247,7 +247,7 @@ rm -rf %{buildroot}
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/checkpassword-reply
 %{_libdir}/%{name}/convert-tool
-%{_libdir}/%{name}/deliver
+%attr(0755,root,mail) %{_libdir}/%{name}/deliver
 %{_libdir}/%{name}/dict
 %{_libdir}/%{name}/dovecot-auth
 %{_libdir}/%{name}/expire-tool
