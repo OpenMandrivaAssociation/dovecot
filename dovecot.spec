@@ -25,7 +25,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.1.7
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -37,7 +37,7 @@ Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
 # sieve plugin. Must be updated when minor version increases.
 Source6:	http://www.dovecot.org/releases/sieve/dovecot-sieve-1.1.5.tar.gz
-Patch:		dovecot-conf-ssl.patch
+Patch0:		dovecot-conf-ssl.patch
 Provides:	imap-server pop3-server
 Provides:	imaps-server pop3s-server
 Requires(pre):	rpm-helper >= 0.21
@@ -128,7 +128,7 @@ This package contains development files for dovecot.
 
 %setup -q -a 6
 # Bug #27491
-%patch -p1 -b .sslfix
+%patch0 -p0 -b .sslfix
 
 %build
 %serverbuild
