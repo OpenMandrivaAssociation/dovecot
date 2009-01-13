@@ -25,7 +25,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.1.8
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -37,6 +37,7 @@ Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
 # sieve plugin. Must be updated when minor version increases.
 Source6:	http://www.dovecot.org/releases/sieve/dovecot-sieve-1.1.6.tar.gz
+Source7:    http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Patch0:		dovecot-conf-ssl.patch
 Provides:	imap-server pop3-server
 Provides:	imaps-server pop3s-server
@@ -188,6 +189,11 @@ chmod 0755 %{buildroot}%{_initrddir}/%{name}
 cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
 cp %{SOURCE4} .
 cp %{SOURCE5} .
+# procmail2sieve converter
+install -m -m 755 %{buildroot}%{_bindir}
+install %{SOURCE7} -m 755 %{buildroot}%{_bindir}
+perl -pi -e 's|#!/usr/local/bin/perl|#!%{_bindir}/perl|' \
+    %{buildroot}%{_bindir}/procmail2sieve
 
 # placed in doc
 rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
@@ -243,6 +249,7 @@ rm -rf %{buildroot}
 %attr(0640,root,mail) %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %{_sbindir}/*
+%{_bindir}/procmail2sieve
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/checkpassword-reply
 %{_libdir}/%{name}/convert-tool
