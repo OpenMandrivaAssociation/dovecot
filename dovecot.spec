@@ -190,7 +190,7 @@ cp dovecot-example.conf %{buildroot}%{_sysconfdir}/dovecot.conf
 cp %{SOURCE4} .
 cp %{SOURCE5} .
 # procmail2sieve converter
-install -m -m 755 %{buildroot}%{_bindir}
+install -d -m 755 %{buildroot}%{_bindir}
 install %{SOURCE7} -m 755 %{buildroot}%{_bindir}
 perl -pi -e 's|#!/usr/local/bin/perl|#!%{_bindir}/perl|' \
     %{buildroot}%{_bindir}/procmail2sieve
