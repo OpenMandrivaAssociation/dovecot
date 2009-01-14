@@ -193,7 +193,7 @@ cp %{SOURCE5} .
 install -d -m 755 %{buildroot}%{_bindir}
 install %{SOURCE7} -m 755 %{buildroot}%{_bindir}
 perl -pi -e 's|#!/usr/local/bin/perl|#!%{_bindir}/perl|' \
-    %{buildroot}%{_bindir}/procmail2sieve
+    %{buildroot}%{_bindir}/procmail2sieve.pl
 
 # placed in doc
 rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
@@ -249,7 +249,7 @@ rm -rf %{buildroot}
 %attr(0640,root,mail) %config(noreplace) %{_sysconfdir}/dovecot.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %{_sbindir}/*
-%{_bindir}/procmail2sieve
+%{_bindir}/procmail2sieve.pl
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/checkpassword-reply
 %{_libdir}/%{name}/convert-tool
