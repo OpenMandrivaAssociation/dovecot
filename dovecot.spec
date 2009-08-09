@@ -59,6 +59,7 @@ BuildRequires:	pam-devel
 BuildRequires:	openssl-devel
 BuildRequires:	libsasl-devel
 BuildRequires:	libcap-devel
+BuildRequires:	gettext-devel
 %if %{build_ldap}
 BuildRequires:	openldap-devel
 %endif
