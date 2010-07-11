@@ -33,8 +33,8 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	1.2.11
-Release:	%mkrel 2
+Version:	1.2.12
+Release:	%mkrel 1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
