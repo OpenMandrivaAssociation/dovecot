@@ -33,7 +33,7 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	1.2.12
+Version:	1.2.13
 Release:	%mkrel 1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -245,7 +245,7 @@ autoreconf -fi
 %if %{build_sieve}
 pushd dovecot-*-sieve-%{sieve_version}
 rm -f configure
-autoreconf -fis
+autoreconf -fi
 touch doc/man/sieve-filter.1
 %configure2_5x \
     --disable-static \
@@ -258,7 +258,7 @@ popd
 %if %{build_managesieve}
 pushd dovecot-*-managesieve-%{managesieve_version}
 rm -f configure
-autoreconf -fis
+autoreconf -fi
 %configure2_5x \
     --disable-static \
     --with-dovecot=../ \
