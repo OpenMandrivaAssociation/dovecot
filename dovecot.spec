@@ -308,7 +308,7 @@ perl -pi -e 's|#!/usr/local/bin/perl|#!%{_bindir}/perl|' \
 rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 
 # Clean up buildroot
-rm -rf %{buildroot}%{_datadir}/doc/dovecot/
+rm -rf %{buildroot}%{_datadir}/doc/dovecot*
 
 %pre
 %_pre_useradd dovecot /var/lib/%{name} /bin/false
