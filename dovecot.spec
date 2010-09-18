@@ -28,13 +28,13 @@
 %define build_sieve 1
 %endif
 
-%define sieve_version 0.1.15
+%define sieve_version 0.1.17
 %define managesieve_version 0.11.11
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	1.2.14
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
