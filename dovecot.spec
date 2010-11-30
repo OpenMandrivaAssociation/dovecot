@@ -29,11 +29,11 @@
 %endif
 
 %define sieve_version 0.1.17
-%define managesieve_version 0.11.11
+%define managesieve_version 0.11.12
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	1.2.15
+Version:	1.2.16
 Release:	%mkrel 1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -47,7 +47,7 @@ Source5:	http://dovecot.org/tools/mboxcrypt.pl
 Source6:	http://www.rename-it.nl/dovecot/1.2/dovecot-1.2-sieve-%{sieve_version}.tar.gz
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Source8:	http://www.rename-it.nl/dovecot/1.2/dovecot-1.2-managesieve-%{managesieve_version}.tar.gz
-Patch8:		http://www.rename-it.nl/dovecot/1.2/dovecot-1.2.14-managesieve-%{managesieve_version}.diff.gz
+Patch8:		http://www.rename-it.nl/dovecot/1.2/dovecot-1.2.16-managesieve-%{managesieve_version}.diff.gz
 Patch0:		dovecot-conf-ssl.patch
 Provides:	imap-server pop3-server
 Provides:	imaps-server pop3s-server
