@@ -42,7 +42,6 @@ Source5:	http://dovecot.org/tools/mboxcrypt.pl
 Source6:	http://www.rename-it.nl/dovecot/2.1/dovecot-2.1-pigeonhole-%{sieve_version}.tar.gz
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Patch0:		dovecot-conf-ssl.patch
-Patch1:		dovecot-1.2.17-autoconf-2.68.patch
 Provides:	imap-server pop3-server
 Provides:	imaps-server pop3s-server
 Requires(pre):	rpm-helper >= 0.21
@@ -178,8 +177,6 @@ This package contains development files for dovecot.
 %setup -q
 # Bug #27491
 %patch0 -p1 -b .sslfix
-
-%patch1 -p1
 
 %if %{build_sieve}
 %setup -q -D -T -a 6
