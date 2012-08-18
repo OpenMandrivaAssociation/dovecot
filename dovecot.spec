@@ -29,7 +29,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	2.1.9
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
@@ -48,6 +48,7 @@ Requires(pre):	rpm-helper >= 0.21
 Requires(post):	rpm-helper >= 0.21
 Requires(preun): rpm-helper >= 0.21
 Requires(postun): rpm-helper >= 0.21
+Requires:	%name-config >= 2.1
 BuildRequires:	pam-devel
 BuildRequires:	openssl-devel
 BuildRequires:	libsasl-devel
@@ -171,6 +172,19 @@ compatible with UW-IMAP and Courier IMAP servers as well as mail clients
 accessing the mailboxes directly.
 
 This package contains development files for dovecot.
+
+%package	config-standalone
+Summary:	Config files for running dovecot standalone
+Group:		System/Servers
+Provides:	%name-config = %version-%release
+
+%description	config-standalone
+Config files for running the Dovecot IMAP and POP3 server by itself.
+
+This is the basic configuration for running a Dovecot server - you may
+want to install the postfix-dovecot-config package instead if you wish
+to run a combination of the Postfix SMTP server and the Dovecot IMAP/POP3
+server.
 
 %prep
 
@@ -359,12 +373,10 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog COPYING* NEWS README TODO
 %doc doc/*.sh doc/*.txt doc/*.cnf
+%attr(0750,root,mail) %dir %_sysconfdir/%name
+%attr(0750,root,mail) %dir %_sysconfdir/%name/conf.d
 %doc %_sysconfdir/dovecot/README
 %attr(0755,root,root) %_initrddir/%{name}
-%attr(0750,root,mail) %dir %_sysconfdir/%name
-%attr(0640,root,mail) %config(noreplace) %{_sysconfdir}/%name/dovecot.conf
-%attr(0750,root,mail) %dir %_sysconfdir/%name/conf.d
-%attr(0640,root,mail) %_sysconfdir/%name/conf.d/*
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %{_sbindir}/*
 %_bindir/doveadm
@@ -429,6 +441,11 @@ rm -rf %{buildroot}
 %_mandir/man1/sieved.1*
 %_mandir/man7/doveadm-search-query.7*
 %_mandir/man7/pigeonhole.7*
+
+%files config-standalone
+%defattr(-,root,root,-)
+%attr(0640,root,mail) %config(noreplace) %{_sysconfdir}/%name/dovecot.conf
+%attr(0640,root,mail) %_sysconfdir/%name/conf.d/*
 
 %if %{build_sieve}
 %files plugins-sieve
