@@ -1,0 +1,93 @@
+#!/bin/bash
+#
+# Init file for Dovecot IMAP daemon
+#
+# Written by Dag Wieers <dag@wieers.com>.
+#
+# chkconfig: 345 57 46
+# description: Dovecot IMAP Daemon
+#
+# processname: dovecot
+# config: /etc/dovecot.conf
+# pidfile: /var/run/dovecot
+
+### BEGIN INIT INFO
+# Provides: dovecot
+# Required-Start: $network $remote_fs
+# Required-Stop: $network $remote_fs
+# Should-Start: ntpd
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Dovecot IMAP daemon
+# Description: The dovecot daemon serves as a master process for the Dovecot \
+#              IMAP and POP servers.
+### END INIT INFO
+
+# source function library
+. /etc/init.d/functions
+
+[ -x /usr/sbin/dovecot ] || exit 1
+[ -r /etc/dovecot.conf ] || exit 1
+
+RETVAL=0
+prog="dovecot"
+desc="IMAP daemon"
+
+start() {
+	echo -n $"Starting $desc ($prog): "
+	daemon $prog
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/dovecot
+	return $RETVAL
+}
+
+stop() {
+	echo -n $"Shutting down $desc ($prog): "
+	killproc $prog
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/dovecot
+	return $RETVAL
+}
+
+restart() {
+	stop
+	start
+}
+
+reload() {
+	echo -n $"Reloading $desc ($prog): "
+	killproc $prog -HUP
+	RETVAL=$?
+	echo
+	return $RETVAL
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	restart
+	;;
+  reload)
+	reload
+	;;
+  condrestart)
+	[ -e /var/lock/subsys/$prog ] && restart
+	RETVAL=$?
+	;;
+  status)
+	status $prog
+	RETVAL=$?
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
+	RETVAL=1
+esac
+
+exit $RETVAL

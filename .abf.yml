@@ -1,9 +1,3 @@
 sources:
-  "dovecot-2.1.9.tar.gz:"	f576e3f4015cc88fc509f693741aaf137f46ed91
-  "dovecot-2.1.9.tar.gz.sig:"	21da87ce14dd4f9c53d2a063be917b88006d974d
-  "dovecot-2.1-pigeonhole-0.3.1.tar.gz:"	a9d895c64e4f6d188f98aefe7cbd83013c4bd5ca
-  "dovecot-init:"	4d9b729a02186cf1290bd6339f578c79e447ad9e
-  "dovecot-pamd:"	08d9a04da6e3393f25b1d8c7b7c3619dae174c60
-  "mboxcrypt.pl:"	4b26efd8b6361f061e0c882a2f64dff4237acbc2
-  "migration_wuimp_to_dovecot.pl:"	178712357776e08c1e42e1364ca215c2bbfd867b
-  "procmail2sieve.pl:"	e9af175be8fde26b5279274345f3503f87d67010
+  "dovecot-2.1-pigeonhole-0.3.1.tar.gz": a9d895c64e4f6d188f98aefe7cbd83013c4bd5ca
+  "dovecot-2.1.9.tar.gz": f576e3f4015cc88fc509f693741aaf137f46ed91
