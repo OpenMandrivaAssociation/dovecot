@@ -28,13 +28,13 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.1.9
-Release:	2
+Version:	2.1.12
+Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 URL:		http://dovecot.org
-Source0:	http://dovecot.org/releases/2.1/%{name}-%{version}.tar.gz
-Source1:	http://dovecot.org/releases/2.1/%{name}-%{version}.tar.gz.sig
+Source0:	http://syksy.dovecot.org/releases/2.1/%{name}-%{version}.tar.gz
+Source1:	http://syksy.dovecot.org/releases/2.1/%{name}-%{version}.tar.gz.sig
 Source2:	%{name}-pamd
 Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
