@@ -24,11 +24,11 @@
 # The Sieve plugin needs to reference internal symbols
 %define _disable_ld_no_undefined 1
 
-%define sieve_version 0.3.1
+%define sieve_version 0.3.3
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.1.12
+Version:	2.1.13
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
