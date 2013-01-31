@@ -28,7 +28,7 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.1.13
+Version:	2.1.14
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
