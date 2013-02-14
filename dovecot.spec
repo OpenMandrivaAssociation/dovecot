@@ -1,25 +1,10 @@
-%define build_gssapi 1
-%define build_ldap 1
-%define build_lucene 1
-%define build_mysql 0
-%define build_pgsql 0
-%define build_sqlite 0
-%define build_sieve 1
-
-%{?_with_gssapi: %{expand: %%global build_gssapi 1}}
-%{?_without_gssapi: %{expand: %%global build_gssapi 0}}
-%{?_with_ldap: %{expand: %%global build_ldap 1}}
-%{?_without_ldap: %{expand: %%global build_ldap 0}}
-%{?_with_lucene: %{expand: %%global build_lucene 1}}
-%{?_without_lucene: %{expand: %%global build_lucene 0}}
-%{?_with_mysql: %{expand: %%global build_mysql 1}}
-%{?_without_mysql: %{expand: %%global build_mysql 0}}
-%{?_with_pgsql: %{expand: %%global build_pgsql 1}}
-%{?_without_pgsql: %{expand: %%global build_pgsql 0}}
-%{?_with_sqlite: %{expand: %%global build_sqlite 1}}
-%{?_without_sqlite: %{expand: %%global build_sqlite 0}}
-%{?_with_sieve: %{expand: %%global build_sieve 1}}
-%{?_without_sieve: %{expand: %%global build_sieve 0}}
+%bcond_without gssapi
+%bcond_without ldap
+%bcond_without lucene
+%bcond_without mysql
+%bcond_without pgsql
+%bcond_without sqlite
+%bcond_without sieve
 
 # The Sieve plugin needs to reference internal symbols
 %define _disable_ld_no_undefined 1
@@ -42,7 +27,6 @@ Source5:	http://dovecot.org/tools/mboxcrypt.pl
 Source6:	http://www.rename-it.nl/dovecot/2.1/dovecot-2.1-pigeonhole-%{sieve_version}.tar.gz
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Patch0:		dovecot-conf-ssl.patch
-Patch1:		dovecot.pkglib.patch
 Provides:	imap-server pop3-server
 Provides:	imaps-server pop3s-server
 Requires(pre):	rpm-helper >= 0.21
@@ -55,24 +39,24 @@ BuildRequires:	openssl-devel
 BuildRequires:	libsasl-devel
 BuildRequires:	libcap-devel
 BuildRequires:	gettext-devel
-%if %{build_ldap}
+%if %{with ldap}
 BuildRequires:	openldap-devel
 %endif
-%if %{build_lucene}
+%if %{with lucene}
 BuildRequires:	clucene-devel
 %endif
-%if %{build_mysql}
+%if %{with mysql}
 BuildRequires:	mysql-devel
 %endif
-%if %{build_pgsql}
+%if %{with pgsql}
 BuildRequires:	postgresql-devel
 %endif
-%if %{build_gssapi}
+%if %{with gssapi}
 BuildRequires:	gssglue-devel
 BuildRequires:	krb5-devel
 %endif
-%if %{build_sqlite}
-BuildRequires: sqlite3-devel
+%if %{with sqlite}
+BuildRequires: pkgconfig(sqlite3)
 %endif
 BuildRequires:	rpm-helper >= 0.21
 BuildRequires:	bzip2-devel
@@ -98,7 +82,7 @@ You can build %{name} with some conditional build swithes;
     --with[out] sqlite		SQLite support (enabled)
     --with[out] sieve		CMU Sieve support (enabled)
 
-%if %{build_sieve}
+%if %{with sieve}
 %package	plugins-sieve
 Summary:	CMU Sieve plugin for dovecot LDA
 Group:		System/Servers
@@ -108,7 +92,7 @@ Requires:	%{name} >= %{version}
 This package provides the CMU Sieve plugin version %{sieve_version} for dovecot LDA.
 %endif
 
-%if %{build_pgsql}
+%if %{with pgsql}
 %package	plugins-pgsql
 Summary:	Postgres SQL backend for dovecot
 Group:		System/Servers
@@ -118,7 +102,7 @@ Requires:	%{name} >= %{version}
 This package provides the Postgres SQL backend for dovecot-auth etc.
 %endif
 
-%if %{build_mysql}
+%if %{with mysql}
 %package	plugins-mysql
 Summary:	MySQL backend for dovecot
 Group:		System/Servers
@@ -128,7 +112,7 @@ Requires:	%{name} >= %{version}
 This package provides the MySQL backend for dovecot-auth etc.
 %endif
 
-%if %{build_ldap}
+%if %{with ldap}
 %package	plugins-ldap
 Summary:	LDAP support for dovecot
 Group:		System/Servers
@@ -138,7 +122,7 @@ Requires:	%{name} >= %{version}
 This package provides LDAP capabilities to dovecot in a modular form.
 %endif
 
-%if %{build_gssapi}
+%if %{with gssapi}
 %package	plugins-gssapi
 Summary:	GSSAPI support for dovecot
 Group:		System/Servers
@@ -148,7 +132,7 @@ Requires:	%{name} >= %{version}
 This package provides GSSAPI capabilities to dovecot in a modular form.
 %endif
 
-%if %{build_sqlite}
+%if %{with sqlite}
 %package	plugins-sqlite
 Summary:	SQLite backend for dovecot
 Group:		System/Servers
@@ -190,12 +174,14 @@ server.
 %prep
 
 %setup -q
-# Bug #27491
-%patch0 -p1 -b .sslfix
-
-%if %{build_sieve}
+%if %{with sieve}
 %setup -q -D -T -a 6
 %endif
+%apply_patches
+
+# Remove patch backups so they don't get packaged into the
+# config subpackages
+find . -name "*~" |xargs rm
 
 %build
 %serverbuild
@@ -209,29 +195,29 @@ server.
     --with-ssldir=%{_sysconfdir}/ssl/%{name} \
     --with-moduledir=%{_libdir}/%{name}/modules \
     --with-nss \
-%if %{build_ldap}
+%if %{with ldap}
     --with-ldap=plugin \
 %endif
-%if %{build_pgsql}
+%if %{with pgsql}
     --with-pgsql \
 %endif
-%if %{build_mysql}
+%if %{with mysql}
     --with-mysql \
 %endif
-%if %{build_sqlite}
+%if %{with sqlite}
     --with-sqlite \
 %endif
-%if %{build_gssapi}
+%if %{with gssapi}
     --with-gssapi=plugin \
 %endif
-%if %{build_lucene}
+%if %{with lucene}
     --with-lucene \
 %endif
     --with-libcap
 
 %make
 
-%if %{build_sieve}
+%if %{with sieve}
 pushd dovecot-*-pigeonhole-%{sieve_version}
 rm -f configure
 autoreconf -fi
@@ -254,7 +240,7 @@ install -d %{buildroot}/var/lib/%{name}
 
 %makeinstall_std
 
-%if %{build_sieve}
+%if %{with sieve}
 pushd dovecot-*-pigeonhole-%{sieve_version}
 %makeinstall_std
 # temporary borkiness i guess...
@@ -302,7 +288,7 @@ rm -rf %{buildroot}%{_datadir}/doc/dovecot*
 %_postun_userdel dovenull
 %_postun_groupdel dovenull
 
-%if %{build_sieve}
+%if %{with sieve}
 %post plugins-sieve
 /sbin/service %{name} condrestart > /dev/null 2>&1 || :
 
@@ -312,7 +298,7 @@ if [ "$1" = "0" ]; then
 fi
 %endif
 
-%if %{build_mysql}
+%if %{with mysql}
 %post plugins-mysql
 /sbin/service %{name} condrestart > /dev/null 2>&1 || :
 
@@ -322,7 +308,7 @@ if [ "$1" = "0" ]; then
 fi
 %endif
 
-%if %{build_pgsql}
+%if %{with pgsql}
 %post plugins-pgsql
 /sbin/service %{name} condrestart > /dev/null 2>&1 || :
 
@@ -332,7 +318,7 @@ if [ "$1" = "0" ]; then
 fi
 %endif
 
-%if %{build_sqlite}
+%if %{with sqlite}
 %post plugins-sqlite
 /sbin/service %{name} condrestart > /dev/null 2>&1 || :
 
@@ -342,7 +328,7 @@ if [ "$1" = "0" ]; then
 fi
 %endif
 
-%if %{build_ldap}
+%if %{with ldap}
 %post plugins-ldap
 /sbin/service %{name} condrestart > /dev/null 2>&1 || :
 
@@ -352,7 +338,7 @@ if [ "$1" = "0" ]; then
 fi
 %endif
 
-%if %{build_gssapi}
+%if %{with gssapi}
 %post plugins-gssapi
 /sbin/service %{name} condrestart > /dev/null 2>&1 || :
 
@@ -427,6 +413,21 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/modules/auth/*.so
 %exclude %_libdir/%name/modules/auth/libauthdb_ldap.so
 %exclude %_libdir/%name/modules/auth/libmech_gssapi.so
+%if %{with pgsql}
+%exclude %{_libdir}/%{name}/modules/auth/libdriver_pgsql.so
+%exclude %{_libdir}/%{name}/modules/dict/libdriver_pgsql.so
+%exclude %{_libdir}/%{name}/modules/libdriver_pgsql.so
+%endif
+%if %{with mysql}
+%exclude %{_libdir}/%{name}/modules/auth/libdriver_mysql.so
+%exclude %{_libdir}/%{name}/modules/dict/libdriver_mysql.so
+%exclude %{_libdir}/%{name}/modules/libdriver_mysql.so
+%endif
+%if %{with sqlite}
+%exclude %{_libdir}/%{name}/modules/auth/libdriver_sqlite.so
+%exclude %{_libdir}/%{name}/modules/dict/libdriver_sqlite.so
+%exclude %{_libdir}/%{name}/modules/libdriver_sqlite.so
+%endif
 %dir %_libdir/%name/modules/doveadm
 %{_libdir}/%{name}/modules/doveadm/*.so
 %dir %_libdir/%name/modules/settings
@@ -445,10 +446,10 @@ rm -rf %{buildroot}
 
 %files config-standalone
 %defattr(-,root,root,-)
-%attr(0640,root,mail) %config(noreplace) %{_sysconfdir}/%name/dovecot.conf
-%attr(0640,root,mail) %_sysconfdir/%name/conf.d/*
+%attr(0644,root,mail) %config(noreplace) %{_sysconfdir}/%name/dovecot.conf
+%attr(0644,root,mail) %_sysconfdir/%name/conf.d/*
 
-%if %{build_sieve}
+%if %{with sieve}
 %files plugins-sieve
 %defattr(-,root,root,-)
 %{_bindir}/sieve-filter
@@ -463,40 +464,40 @@ rm -rf %{buildroot}
 %{_mandir}/man1/sieve-test.1*
 %endif
 
-%if %{build_ldap}
+%if %{with ldap}
 %files plugins-ldap
 %defattr(-,root,root)
 %{_libdir}/%{name}/modules/auth/libauthdb_ldap.so
 %endif
 
-%if %{build_gssapi}
+%if %{with gssapi}
 %files plugins-gssapi
 %defattr(-,root,root)
 %{_libdir}/%{name}/modules/auth/libmech_gssapi.so
 %endif
 
-%if %{build_sqlite}
+%if %{with sqlite}
 %files plugins-sqlite
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/modules/auth/libdriver_sqlite.so
 %{_libdir}/%{name}/modules/dict/libdriver_sqlite.so
-%{_libdir}/%{name}/modules/sql/libdriver_sqlite.so
+%{_libdir}/%{name}/modules/libdriver_sqlite.so
 %endif
 
-%if %{build_mysql}
+%if %{with mysql}
 %files plugins-mysql
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/modules/auth/libdriver_mysql.so
 %{_libdir}/%{name}/modules/dict/libdriver_mysql.so
-%{_libdir}/%{name}/modules/sql/libdriver_mysql.so
+%{_libdir}/%{name}/modules/libdriver_mysql.so
 %endif
 
-%if %{build_pgsql}
+%if %{with pgsql}
 %files plugins-pgsql
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/modules/auth/libdriver_pgsql.so
 %{_libdir}/%{name}/modules/dict/libdriver_pgsql.so
-%{_libdir}/%{name}/modules/sql/libdriver_pgsql.so
+%{_libdir}/%{name}/modules/libdriver_pgsql.so
 %endif
 
 %files devel
