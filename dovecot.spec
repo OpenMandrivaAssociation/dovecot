@@ -452,4 +452,51 @@ rm -rf %{buildroot}
 %{_bindir}/sieve-filter
 %{_bindir}/sieve-test
 %{_bindir}/sievec
+%{_bindir}/sieve-dump
+%{_libdir}/%name/libdovecot-sieve.so*
+%{_libdir}/%name/managesieve
+%{_libdir}/%name/managesieve-login
+%{_mandir}/man1/sievec.1*
+%{_mandir}/man1/sieve-filter.1*
+%{_mandir}/man1/sieve-test.1*
+%endif
+
+%if %{with ldap}
+%files plugins-ldap
+%{_libdir}/%{name}/modules/auth/libauthdb_ldap.so
+%endif
+
+%if %{with gssapi}
+%files plugins-gssapi
+%{_libdir}/%{name}/modules/auth/libmech_gssapi.so
+%endif
+
+%if %{with sqlite}
+%files plugins-sqlite
+%{_libdir}/%{name}/modules/auth/libdriver_sqlite.so
+%{_libdir}/%{name}/modules/dict/libdriver_sqlite.so
+%{_libdir}/%{name}/modules/libdriver_sqlite.so
+%endif
+
+%if %{with mysql}
+%files plugins-mysql
+%{_libdir}/%{name}/modules/auth/libdriver_mysql.so
+%{_libdir}/%{name}/modules/dict/libdriver_mysql.so
+%{_libdir}/%{name}/modules/libdriver_mysql.so
+%endif
+
+%if %{with pgsql}
+%files plugins-pgsql
+%{_libdir}/%{name}/modules/auth/libdriver_pgsql.so
+%{_libdir}/%{name}/modules/dict/libdriver_pgsql.so
+%{_libdir}/%{name}/modules/libdriver_pgsql.so
+%endif
+
+%files devel
+%dir %{_includedir}/%{name}
+%{_includedir}/%{name}/*
+%{_libdir}/%{name}/dovecot-config
+#{_libdir}/%{name}/modules/*.*a
+#{_libdir}/%{name}/modules/auth/*.*a
+%{_datadir}/aclocal/*.m4
 
