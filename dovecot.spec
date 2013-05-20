@@ -9,24 +9,26 @@
 # The Sieve plugin needs to reference internal symbols
 %define _disable_ld_no_undefined 1
 
-%define sieve_version 0.3.3
+%define major %(echo %version |cut -d. -f1-2)
+%define sieve_version 0.4.0
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.1.15
-Release:	2
+Version:	2.2.2
+Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 Url:		http://dovecot.org
-Source0:	http://syksy.dovecot.org/releases/2.1/%{name}-%{version}.tar.gz
-Source1:	http://syksy.dovecot.org/releases/2.1/%{name}-%{version}.tar.gz.sig
+Source0:	http://syksy.dovecot.org/releases/%major/%{name}-%{version}.tar.gz
+Source1:	http://syksy.dovecot.org/releases/%major/%{name}-%{version}.tar.gz.sig
 Source2:	%{name}-pamd
 Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
-Source6:	http://www.rename-it.nl/dovecot/2.1/dovecot-2.1-pigeonhole-%{sieve_version}.tar.gz
+Source6:	http://www.rename-it.nl/dovecot/%major/dovecot-%major-pigeonhole-%{sieve_version}.tar.gz
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Patch0:		dovecot-conf-ssl.patch
+Patch1:		dovecot-2.2.2-quota-tirpc.patch
 
 BuildRequires:	cap-devel
 BuildRequires:	gettext-devel
@@ -382,6 +384,9 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/dns-client
 %{_libdir}/%{name}/doveadm-server
 %{_libdir}/%{name}/dovecot-lda
+%{_libdir}/%{name}/imap-urlauth
+%{_libdir}/%{name}/imap-urlauth-login
+%{_libdir}/%{name}/imap-urlauth-worker
 %{_libdir}/%{name}/indexer
 %{_libdir}/%{name}/indexer-worker
 %{_libdir}/%{name}/ipc
@@ -391,6 +396,7 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/maildirlock
 %{_libdir}/%{name}/pop3
 %{_libdir}/%{name}/pop3-login
+%{_libdir}/%{name}/quota-status
 %{_libdir}/%{name}/rawlog
 %{_libdir}/%{name}/replicator
 %{_libdir}/%{name}/script
@@ -398,10 +404,11 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/ssl-params
 %{_libdir}/%{name}/stats
 %{_libdir}/%{name}/xml2text
+%{_libdir}/%{name}/libdovecot-compression.so*
 %{_libdir}/%{name}/libdovecot-lda.so*
 %{_libdir}/%{name}/libdovecot-login.so*
 %{_libdir}/%{name}/libdovecot-sql.so*
-%{_libdir}/%{name}/libdovecot-ssl.so*
+#{_libdir}/%{name}/libdovecot-ssl.so*
 %{_libdir}/%{name}/libdovecot-storage.so*
 %{_libdir}/%{name}/libdovecot.so*
 %{_libdir}/dovecot/lmtp
@@ -454,6 +461,7 @@ rm -rf %{buildroot}
 %{_bindir}/sievec
 %{_bindir}/sieve-dump
 %{_libdir}/%name/libdovecot-sieve.so*
+%{_libdir}/%name/sieve
 %{_libdir}/%name/managesieve
 %{_libdir}/%name/managesieve-login
 %{_mandir}/man1/sievec.1*
