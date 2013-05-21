@@ -35,6 +35,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
 BuildRequires:	sasl-devel
 BuildRequires:	pkgconfig(openssl)
+BuildRequires:	pkgconfig(libtirpc)
 %if %{with ldap}
 BuildRequires:	openldap-devel
 %endif
