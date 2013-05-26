@@ -27,7 +27,7 @@
 . /etc/init.d/functions
 
 [ -x /usr/sbin/dovecot ] || exit 1
-[ -r /etc/dovecot.conf ] || exit 1
+[ -r /etc/dovecot/dovecot.conf ] || exit 1
 
 RETVAL=0
 prog="dovecot"
