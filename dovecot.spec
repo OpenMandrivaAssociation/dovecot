@@ -5,6 +5,7 @@
 %bcond_without pgsql
 %bcond_without sqlite
 %bcond_without sieve
+%bcond_without systemd
 
 # The Sieve plugin needs to reference internal symbols
 %define _disable_ld_no_undefined 1
@@ -15,7 +16,7 @@
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
 Version:	2.2.2
-Release:	1
+Release:	2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 Url:		http://dovecot.org
@@ -197,6 +198,9 @@ find . -name "*~" |xargs rm
     --with-ssl=openssl \
     --with-ssldir=%{_sysconfdir}/ssl/%{name} \
     --with-moduledir=%{_libdir}/%{name}/modules \
+%if %{with systemd}
+    --with-systemdsystemunitdir=/lib/systemd/system \
+%endif
     --with-nss \
 %if %{with ldap}
     --with-ldap=plugin \
@@ -253,8 +257,10 @@ popd
 %endif
 
 cat %{SOURCE2} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
+%if %{without systemd}
 cat %{SOURCE3} > %{buildroot}%{_initrddir}/%{name}
 chmod 0755 %{buildroot}%{_initrddir}/%{name}
+%endif
 pwd
 cp doc/example-config/dovecot.conf %{buildroot}%{_sysconfdir}/%{name}/dovecot.conf
 cp -a doc/example-config/conf.d %buildroot%{_sysconfdir}/%{name}/
@@ -365,7 +371,12 @@ rm -rf %{buildroot}
 %attr(0750,root,mail) %dir %{_sysconfdir}/%{name}
 %attr(0750,root,mail) %dir %{_sysconfdir}/%{name}/conf.d
 %doc %{_sysconfdir}/dovecot/README
+%if %{with systemd}
+/lib/systemd/system/dovecot.service
+/lib/systemd/system/dovecot.socket
+%else
 %attr(0755,root,root) %{_initrddir}/%{name}
+%endif
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %{_sbindir}/*
 %{_bindir}/doveadm
