@@ -1,8 +1,3 @@
-removed_sources:
-  dovecot-2.2.2.tar.gz: c095b0a8e25d730b854f0ace37544ad203db0891
-  dovecot-2.2.5.tar.gz: 12c976ec24a869d958f3b09c1a8803dda54fab86
 sources:
-  dovecot-2.2-pigeonhole-0.4.0.tar.gz: 94ab5b803de8fd91c4e9691c54aadd8fd7c6c401
-  dovecot-2.2.2.tar.gz.sig: d20b1b19949bf8dd6ce76aff519e5a3ae229f20b
-  dovecot-2.2.5.tar.gz.sig: 963e7b910347f4bf901110af204d25b86ca2c091
-  dovecot-2.2.8.tar.gz: 1c415e30fa1b59055b5197cf057811e3e3b1dacb
+  dovecot-2.2-pigeonhole-0.4.2.tar.gz: 80491d872838d27a6f2775561ba9163150c23a1c
+  dovecot-2.2.10.tar.gz: aa6264444096abf139bb4f4c504c01f6107ce740

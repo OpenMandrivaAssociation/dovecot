@@ -11,12 +11,12 @@
 %define _disable_ld_no_undefined 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.4.0
+%define sieve_version 0.4.2
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.2.8
-Release:	5
+Version:	2.2.10
+Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 Url:		http://dovecot.org
@@ -27,6 +27,7 @@ Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
 Source6:	http://www.rename-it.nl/dovecot/%major/dovecot-%major-pigeonhole-%{sieve_version}.tar.gz
+Source100:	%{name}.rpmlintrc
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Patch0:		dovecot-conf-ssl.patch
 Patch1:		dovecot-2.2.2-quota-tirpc.patch
