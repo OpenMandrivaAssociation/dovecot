@@ -1,7 +1,0 @@
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iEYEABECAAYFAlKzsiQACgkQyUhSUUBVismFYQCgov3WnYdx+n2leTyvKoP57JlL
-4JAAniOj1hSUJbACpiJPgrHGr36v4ShX
-=MtNz
------END PGP SIGNATURE-----

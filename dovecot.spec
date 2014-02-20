@@ -15,7 +15,7 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.2.10
+Version:	2.2.12
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -384,39 +384,42 @@ rm -rf %{buildroot}
 %{_bindir}/doveconf
 %{_bindir}/dsync
 %{_bindir}/procmail2sieve.pl
+%dir %{_libexecdir}/%{name}
+%{_libexecdir}/%{name}/checkpassword-reply
+%attr(2755,root,mail) %{_libexecdir}/%{name}/deliver
+%{_libexecdir}/%{name}/aggregator
+%{_libexecdir}/%{name}/anvil
+%{_libexecdir}/%{name}/auth
+%{_libexecdir}/%{name}/config
+%{_libexecdir}/%{name}/decode2text.sh
+%{_libexecdir}/%{name}/dict
+%{_libexecdir}/%{name}/director
+%{_libexecdir}/%{name}/dns-client
+%{_libexecdir}/%{name}/doveadm-server
+%{_libexecdir}/%{name}/dovecot-lda
+%{_libexecdir}/%{name}/imap-urlauth
+%{_libexecdir}/%{name}/imap-urlauth-login
+%{_libexecdir}/%{name}/imap-urlauth-worker
+%{_libexecdir}/%{name}/indexer
+%{_libexecdir}/%{name}/indexer-worker
+%{_libexecdir}/%{name}/ipc
+%{_libexecdir}/%{name}/gdbhelper
+%{_libexecdir}/%{name}/imap
+%{_libexecdir}/%{name}/imap-login
+%{_libexecdir}/%{name}/lmtp
+%{_libexecdir}/%{name}/log
+%{_libexecdir}/%{name}/maildirlock
+%{_libexecdir}/%{name}/pop3
+%{_libexecdir}/%{name}/pop3-login
+%{_libexecdir}/%{name}/quota-status
+%{_libexecdir}/%{name}/rawlog
+%{_libexecdir}/%{name}/replicator
+%{_libexecdir}/%{name}/script
+%{_libexecdir}/%{name}/script-login
+%{_libexecdir}/%{name}/ssl-params
+%{_libexecdir}/%{name}/stats
+%{_libexecdir}/%{name}/xml2text
 %dir %{_libdir}/%{name}
-%{_libdir}/%{name}/checkpassword-reply
-%attr(2755,root,mail) %{_libdir}/%{name}/deliver
-%{_libdir}/%{name}/aggregator
-%{_libdir}/%{name}/anvil
-%{_libdir}/%{name}/auth
-%{_libdir}/%{name}/config
-%{_libdir}/%{name}/decode2text.sh
-%{_libdir}/%{name}/dict
-%{_libdir}/%{name}/director
-%{_libdir}/%{name}/dns-client
-%{_libdir}/%{name}/doveadm-server
-%{_libdir}/%{name}/dovecot-lda
-%{_libdir}/%{name}/imap-urlauth
-%{_libdir}/%{name}/imap-urlauth-login
-%{_libdir}/%{name}/imap-urlauth-worker
-%{_libdir}/%{name}/indexer
-%{_libdir}/%{name}/indexer-worker
-%{_libdir}/%{name}/ipc
-%{_libdir}/%{name}/gdbhelper
-%{_libdir}/%{name}/imap
-%{_libdir}/%{name}/imap-login
-%{_libdir}/%{name}/maildirlock
-%{_libdir}/%{name}/pop3
-%{_libdir}/%{name}/pop3-login
-%{_libdir}/%{name}/quota-status
-%{_libdir}/%{name}/rawlog
-%{_libdir}/%{name}/replicator
-%{_libdir}/%{name}/script
-%{_libdir}/%{name}/script-login
-%{_libdir}/%{name}/ssl-params
-%{_libdir}/%{name}/stats
-%{_libdir}/%{name}/xml2text
 %{_libdir}/%{name}/libdovecot-compression.so*
 %{_libdir}/%{name}/libdovecot-lda.so*
 %{_libdir}/%{name}/libdovecot-login.so*
@@ -424,8 +427,6 @@ rm -rf %{buildroot}
 #{_libdir}/%{name}/libdovecot-ssl.so*
 %{_libdir}/%{name}/libdovecot-storage.so*
 %{_libdir}/%{name}/libdovecot.so*
-%{_libdir}/dovecot/lmtp
-%{_libdir}/dovecot/log
 %dir %{_libdir}/%{name}/modules
 %{_libdir}/%{name}/modules/*.so
 %dir %{_libdir}/%{name}/modules/auth
@@ -475,8 +476,8 @@ rm -rf %{buildroot}
 %{_bindir}/sieve-dump
 %{_libdir}/%name/libdovecot-sieve.so*
 %{_libdir}/%name/sieve
-%{_libdir}/%name/managesieve
-%{_libdir}/%name/managesieve-login
+%{_libexecdir}/%name/managesieve
+%{_libexecdir}/%name/managesieve-login
 %{_mandir}/man1/sievec.1*
 %{_mandir}/man1/sieve-filter.1*
 %{_mandir}/man1/sieve-test.1*
