@@ -11,22 +11,22 @@
 %define _disable_ld_no_undefined 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.4.2
+%define sieve_version 0.4.6
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.2.12
-Release:	4
+Version:	2.2.16
+Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 Url:		http://dovecot.org
-Source0:	http://syksy.dovecot.org/releases/%major/%{name}-%{version}.tar.gz
-Source1:	http://syksy.dovecot.org/releases/%major/%{name}-%{version}.tar.gz.sig
+Source0:	http://dovecot.org/releases/%{major}/dovecot-%{version}.tar.gz
+Source1:	http://dovecot.org/releases/%{major}/dovecot-%{version}.tar.gz.sig
 Source2:	%{name}-pamd
 Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
-Source6:	http://www.rename-it.nl/dovecot/%major/dovecot-%major-pigeonhole-%{sieve_version}.tar.gz
+Source6:	http://pigeonhole.dovecot.org/releases/%{major}/dovecot-%{major}-pigeonhole-%{sieve_version}.tar.gz
 Source100:	%{name}.rpmlintrc
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Patch0:		dovecot-conf-ssl.patch
@@ -421,6 +421,7 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/xml2text
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/libdovecot-compression.so*
+%{_libdir}/%{name}/libdovecot-dsync.so*
 %{_libdir}/%{name}/libdovecot-lda.so*
 %{_libdir}/%{name}/libdovecot-login.so*
 %{_libdir}/%{name}/libdovecot-sql.so*
@@ -452,6 +453,8 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/modules/doveadm/*.so
 %dir %{_libdir}/%{name}/modules/settings
 %{_libdir}/%{name}/modules/settings/*.so
+%dir %{_libdir}/%{name}/modules/stats
+%{_libdir}/%{name}/modules/stats/*.so
 %attr(0700,root,root) %dir /var/lib/%{name}
 %{_mandir}/man1/deliver.1*
 %{_mandir}/man1/doveadm*.1*
@@ -475,7 +478,7 @@ rm -rf %{buildroot}
 %{_bindir}/sievec
 %{_bindir}/sieve-dump
 %{_libdir}/%name/libdovecot-sieve.so*
-%{_libdir}/%name/sieve
+%{_libdir}/dovecot/modules/sieve/lib90_sieve_extprograms_plugin.so
 %{_libexecdir}/%name/managesieve
 %{_libexecdir}/%name/managesieve-login
 %{_mandir}/man1/sievec.1*
