@@ -15,8 +15,8 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.2.18
-Release:	2
+Version:	2.2.19
+Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 Url:		http://dovecot.org
@@ -188,10 +188,14 @@ server.
 # config subpackages
 find . -name "*~" |xargs rm
 
+libtoolize --force
+cd *pigeonhole*
+libtoolize --force
+
 %build
 %serverbuild
 
-%configure2_5x \
+%configure \
     --enable-header-install \
     --disable-static \
     --with-sql=plugin \
@@ -405,6 +409,7 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/ipc
 %{_libexecdir}/%{name}/gdbhelper
 %{_libexecdir}/%{name}/imap
+%{_libexecdir}/%{name}/imap-hibernate
 %{_libexecdir}/%{name}/imap-login
 %{_libexecdir}/%{name}/lmtp
 %{_libexecdir}/%{name}/log
@@ -455,6 +460,7 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/modules/settings/*.so
 %dir %{_libdir}/%{name}/modules/stats
 %{_libdir}/%{name}/modules/stats/*.so
+%{_datadir}/%{name}
 %attr(0700,root,root) %dir /var/lib/%{name}
 %{_mandir}/man1/deliver.1*
 %{_mandir}/man1/doveadm*.1*
@@ -482,7 +488,6 @@ rm -rf %{buildroot}
 %{_libexecdir}/%name/managesieve
 %{_libexecdir}/%name/managesieve-login
 %{_mandir}/man1/sievec.1*
-%{_mandir}/man1/sieve-filter.1*
 %{_mandir}/man1/sieve-test.1*
 %endif
 
