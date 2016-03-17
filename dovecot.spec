@@ -11,11 +11,11 @@
 %define _disable_ld_no_undefined 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.4.8
+%define sieve_version 0.4.12
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.2.21
+Version:	2.2.22
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -427,6 +427,7 @@ rm -rf %{buildroot}
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/libdovecot-compression.so*
 %{_libdir}/%{name}/libdovecot-dsync.so*
+%{_libdir}/%{name}/libdovecot-fts.so*
 %{_libdir}/%{name}/libdovecot-lda.so*
 %{_libdir}/%{name}/libdovecot-login.so*
 %{_libdir}/%{name}/libdovecot-sql.so*
