@@ -11,11 +11,11 @@
 %define _disable_ld_no_undefined 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.4.13
+%define sieve_version 0.4.14
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.2.23
+Version:	2.2.25
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -425,10 +425,12 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/stats
 %{_libexecdir}/%{name}/xml2text
 %dir %{_libdir}/%{name}
+%{_libdir}/%{name}/libdcrypt_openssl.so
 %{_libdir}/%{name}/libdovecot-compression.so*
 %{_libdir}/%{name}/libdovecot-dsync.so*
 %{_libdir}/%{name}/libdovecot-fts.so*
 %{_libdir}/%{name}/libdovecot-lda.so*
+%{_libdir}/%{name}/libdovecot-ldap.so*
 %{_libdir}/%{name}/libdovecot-login.so*
 %{_libdir}/%{name}/libdovecot-sql.so*
 #{_libdir}/%{name}/libdovecot-ssl.so*
@@ -455,6 +457,8 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/%{name}/modules/dict/libdriver_sqlite.so
 %exclude %{_libdir}/%{name}/modules/libdriver_sqlite.so
 %endif
+%dir %{_libdir}/%{name}/modules/dict
+%{_libdir}/%{name}/modules/dict/libdict_ldap.so
 %dir %{_libdir}/%{name}/modules/doveadm
 %{_libdir}/%{name}/modules/doveadm/*.so
 %dir %{_libdir}/%{name}/modules/settings
@@ -486,6 +490,7 @@ rm -rf %{buildroot}
 %{_bindir}/sieve-dump
 %{_libdir}/%name/libdovecot-sieve.so*
 %{_libdir}/dovecot/modules/sieve/lib90_sieve_extprograms_plugin.so
+%{_libdir}/dovecot/modules/sieve/lib90_sieve_imapsieve_plugin.so
 %{_libexecdir}/%name/managesieve
 %{_libexecdir}/%name/managesieve-login
 %{_mandir}/man1/sievec.1*

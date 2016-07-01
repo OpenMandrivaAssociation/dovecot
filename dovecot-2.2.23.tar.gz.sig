@@ -1,7 +1,0 @@
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEABECAAYFAlb7x44ACgkQyUhSUUBVismAQwCfZohL6mPHf4pJr+gQqy7EE7YL
-YiUAn0te8/Oc0UfmcX7v+tfJkQLwCD5z
-=HSrl
------END PGP SIGNATURE-----
