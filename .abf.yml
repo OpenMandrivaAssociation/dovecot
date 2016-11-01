@@ -1,3 +1,4 @@
 sources:
   dovecot-2.2.26.tar.gz: de03b1895bbf3703e54797fe313a40daa0582417
   dovecot-2.2-pigeonhole-0.4.15.tar.gz: 82713491d9f6c36aea1d97b1b334c964ee4a45f8
+  dovecot-2.2.26.0.tar.gz: b2b555473ce9099b3e13e5c61c234ad16549b93c

@@ -15,7 +15,7 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.2.26
+Version:	2.2.26.0
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -31,6 +31,7 @@ Source100:	%{name}.rpmlintrc
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Patch0:		dovecot-conf-ssl.patch
 Patch1:		dovecot-2.2.2-quota-tirpc.patch
+Patch2:		dovecot-2.2.26.0-find-libstemmer.patch
 
 BuildRequires:	cap-devel
 BuildRequires:	gettext-devel
@@ -59,6 +60,7 @@ BuildRequires:	pkgconfig(sqlite3)
 %endif
 BuildRequires:	rpm-helper >= 0.21
 BuildRequires:	bzip2-devel
+BuildRequires:	libstemmer-devel
 Provides:	imap-server
 Provides:	pop3-server
 Provides:	imaps-server
@@ -234,7 +236,7 @@ pushd dovecot-*-pigeonhole-%{sieve_version}
 rm -f configure
 autoreconf -fi
 touch doc/man/sieve-filter.1
-%configure2_5x \
+%configure \
     --disable-static \
     --with-dovecot=../ \
     --with-unfinished-features
