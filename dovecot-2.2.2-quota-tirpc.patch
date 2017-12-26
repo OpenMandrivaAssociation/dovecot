@@ -1,6 +1,6 @@
---- dovecot-2.2.16/src/plugins/quota/Makefile.am.0001~	2014-09-10 12:38:58.000000000 +0200
-+++ dovecot-2.2.16/src/plugins/quota/Makefile.am	2015-03-13 16:11:42.295338661 +0100
-@@ -47,7 +47,7 @@ quota_common_objects = \
+--- dovecot-ce-2.3.0/src/plugins/quota/Makefile.am.0001~	2017-12-22 14:53:41.000000000 +0100
++++ dovecot-ce-2.3.0/src/plugins/quota/Makefile.am	2017-12-26 01:17:53.988281433 +0100
+@@ -55,7 +55,7 @@ quota_common_objects = \
  
  lib10_quota_plugin_la_SOURCES = $(quota_dist_sources)
  nodist_lib10_quota_plugin_la_SOURCES = $(RQUOTA_XDR)
@@ -9,11 +9,11 @@
  
  doveadm_module_LTLIBRARIES = \
  	lib10_doveadm_quota_plugin.la
---- dovecot-2.2.16/src/plugins/quota/Makefile.in.0001~	2015-03-13 16:11:42.295338661 +0100
-+++ dovecot-2.2.16/src/plugins/quota/Makefile.in	2015-03-13 16:12:13.346675404 +0100
-@@ -275,7 +275,7 @@ LD = @LD@
- LDAP_LIBS = @LDAP_LIBS@
- LDFLAGS = @LDFLAGS@
+--- dovecot-ce-2.3.0/src/plugins/quota/Makefile.in.0001~	2017-12-26 01:17:53.988281433 +0100
++++ dovecot-ce-2.3.0/src/plugins/quota/Makefile.in	2017-12-26 01:20:45.727762351 +0100
+@@ -335,7 +335,7 @@ LDFLAGS = @LDFLAGS@
+ LD_NO_WHOLE_ARCHIVE = @LD_NO_WHOLE_ARCHIVE@
+ LD_WHOLE_ARCHIVE = @LD_WHOLE_ARCHIVE@
  LIBCAP = @LIBCAP@
 -LIBDOVECOT = @LIBDOVECOT@
 +LIBDOVECOT = @LIBDOVECOT@ -ltirpc

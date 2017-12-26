@@ -11,11 +11,11 @@
 %define _disable_ld_no_undefined 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.4.20
+%define sieve_version 0.5.0
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.2.33.1
+Version:	2.3.0
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -180,9 +180,9 @@ server.
 
 %prep
 
-%setup -q
+%setup -qn dovecot-ce-%{version}
 %if %{with sieve}
-%setup -q -D -T -a 6
+%setup -qn dovecot-ce-%{version} -D -T -a 6
 %endif
 %apply_patches
 
@@ -416,6 +416,7 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/lmtp
 %{_libexecdir}/%{name}/log
 %{_libexecdir}/%{name}/maildirlock
+%{_libexecdir}/%{name}/old-stats
 %{_libexecdir}/%{name}/pop3
 %{_libexecdir}/%{name}/pop3-login
 %{_libexecdir}/%{name}/quota-status
@@ -423,8 +424,9 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/replicator
 %{_libexecdir}/%{name}/script
 %{_libexecdir}/%{name}/script-login
-%{_libexecdir}/%{name}/ssl-params
 %{_libexecdir}/%{name}/stats
+%{_libexecdir}/%{name}/submission
+%{_libexecdir}/%{name}/submission-login
 %{_libexecdir}/%{name}/xml2text
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/libdcrypt_openssl.so
@@ -465,8 +467,8 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/modules/doveadm/*.so
 %dir %{_libdir}/%{name}/modules/settings
 %{_libdir}/%{name}/modules/settings/*.so
-%dir %{_libdir}/%{name}/modules/stats
-%{_libdir}/%{name}/modules/stats/*.so
+%dir %{_libdir}/%{name}/modules/old-stats
+%{_libdir}/%{name}/modules/old-stats/*.so
 %{_datadir}/%{name}
 %attr(0700,root,root) %dir /var/lib/%{name}
 %{_mandir}/man1/deliver.1*
