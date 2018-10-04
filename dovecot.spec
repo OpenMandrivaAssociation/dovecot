@@ -11,12 +11,12 @@
 %define _disable_ld_no_undefined 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.5.0
+%define sieve_version 0.5.3
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.3.0
-Release:	2
+Version:	2.3.3
+Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 Url:		http://dovecot.org
@@ -180,9 +180,9 @@ server.
 
 %prep
 
-%setup -qn dovecot-ce-%{version}
+%setup -qn %{name}-%{version}
 %if %{with sieve}
-%setup -qn dovecot-ce-%{version} -D -T -a 6
+%setup -qn %{name}-%{version} -D -T -a 6
 %endif
 %apply_patches
 
