@@ -11,11 +11,11 @@
 %define _disable_ld_no_undefined 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.5.6
+%define sieve_version 0.5.8
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.3.7.2
+Version:	2.3.8
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -403,6 +403,7 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/dns-client
 %{_libexecdir}/%{name}/doveadm-server
 %{_libexecdir}/%{name}/dovecot-lda
+%{_libexecdir}/%{name}/health-check.sh
 %{_libexecdir}/%{name}/imap-urlauth
 %{_libexecdir}/%{name}/imap-urlauth-login
 %{_libexecdir}/%{name}/imap-urlauth-worker
@@ -539,4 +540,3 @@ rm -rf %{buildroot}
 #{_libdir}/%{name}/modules/*.*a
 #{_libdir}/%{name}/modules/auth/*.*a
 %{_datadir}/aclocal/*.m4
-
