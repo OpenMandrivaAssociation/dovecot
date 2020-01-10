@@ -184,7 +184,7 @@ server.
 %if %{with sieve}
 %setup -qn %{name}-%{version} -D -T -a 6
 %endif
-%apply_patches
+%autopatch -p1
 
 # Remove patch backups so they don't get packaged into the
 # config subpackages
