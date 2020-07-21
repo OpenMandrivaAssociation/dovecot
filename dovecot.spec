@@ -203,7 +203,7 @@ libtoolize --force
     --with-sql=plugin \
     --with-sql-drivers \
     --with-ssl=openssl \
-    --with-ssldir=%{_sysconfdir}/ssl/%{name} \
+    --with-ssldir=%{_sysconfdir}/pki/%{name} \
     --with-moduledir=%{_libdir}/%{name}/modules \
 %if %{with systemd}
     --with-systemdsystemunitdir=/lib/systemd/system \
