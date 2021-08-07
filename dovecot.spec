@@ -39,6 +39,11 @@ BuildRequires:	pam-devel
 BuildRequires:	sasl-devel
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(libtirpc)
+BuildRequires:	pkgconfig(libsodium)
+BuildRequires:	pkgconfig(liblzma)
+BuildRequires:	pkgconfig(liblz4)
+BuildRequires:	pkgconfig(libzstd)
+BuildRequires:	pkgconfig(libsystemd)
 %if %{with ldap}
 BuildRequires:	openldap-devel
 %endif
