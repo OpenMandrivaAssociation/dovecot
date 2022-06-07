@@ -193,7 +193,7 @@ server.
 
 # Remove patch backups so they don't get packaged into the
 # config subpackages
-find . -name "*~" |xargs rm
+find . -name "*~" |xargs rm -rf
 
 libtoolize --force
 cd *pigeonhole*
