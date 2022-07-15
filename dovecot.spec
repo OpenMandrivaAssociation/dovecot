@@ -15,7 +15,7 @@
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.3.19
+Version:	2.3.19.1
 Release:	2
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -27,8 +27,9 @@ Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
 Source6:	http://pigeonhole.dovecot.org/releases/%{major}/dovecot-%{major}-pigeonhole-%{sieve_version}.tar.gz
-Source100:	%{name}.rpmlintrc
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
+Source20:	dovecot.sysusers
+Source100:	%{name}.rpmlintrc
 Patch0:		dovecot-conf-ssl.patch
 Patch1:		dovecot-2.2.2-quota-tirpc.patch
 Patch2:		dovecot-2.2.26.0-find-libstemmer.patch
@@ -211,7 +212,7 @@ libtoolize --force
     --with-ssldir=%{_sysconfdir}/pki/%{name} \
     --with-moduledir=%{_libdir}/%{name}/modules \
 %if %{with systemd}
-    --with-systemdsystemunitdir=/lib/systemd/system \
+    --with-systemdsystemunitdir=%{_unitdir} \
 %endif
     --with-nss \
 %if %{with ldap}
@@ -272,6 +273,9 @@ cat %{SOURCE2} > %{buildroot}%{_sysconfdir}/pam.d/%{name}
 %if %{without systemd}
 cat %{SOURCE3} > %{buildroot}%{_initrddir}/%{name}
 chmod 0755 %{buildroot}%{_initrddir}/%{name}
+%else
+mkdir -p %{buildroot}%{_sysusersdir}
+cp %{S:20} %{buildroot}%{_sysusersdir}/dovecot.conf
 %endif
 pwd
 cp doc/example-config/dovecot.conf %{buildroot}%{_sysconfdir}/%{name}/dovecot.conf
@@ -291,10 +295,7 @@ rm -f %{buildroot}%{_sysconfdir}/dovecot*-example.conf
 rm -rf %{buildroot}%{_datadir}/doc/dovecot*
 
 %pre
-%_pre_useradd dovecot /var/lib/%{name} /bin/false
-%_pre_groupadd dovecot dovecot
-%_pre_useradd dovenull /var/lib/%{name} /bin/false
-%_pre_groupadd dovenull dovenull
+%sysusers_create_package dovecot %{S:20}
 
 %post
 %_post_service dovecot
@@ -302,12 +303,6 @@ rm -rf %{buildroot}%{_datadir}/doc/dovecot*
 
 %preun
 %_preun_service dovecot
-
-%postun
-%_postun_userdel dovecot
-%_postun_groupdel dovecot
-%_postun_userdel dovenull
-%_postun_groupdel dovenull
 
 %if %{with sieve}
 %post plugins-sieve
@@ -384,21 +379,22 @@ rm -rf %{buildroot}
 %attr(0750,root,mail) %dir %{_sysconfdir}/%{name}/conf.d
 %doc %{_sysconfdir}/dovecot/README
 %if %{with systemd}
-/lib/systemd/system/dovecot.service
-/lib/systemd/system/dovecot.socket
+%{_unitdir}/dovecot.service
+%{_unitdir}/dovecot.socket
+%{_sysusersdir}/dovecot.conf
 %else
 %attr(0755,root,root) %{_initrddir}/%{name}
 %endif
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
-%{_sbindir}/*
 %{_bindir}/doveadm
 %{_bindir}/doveconf
+%{_bindir}/dovecot
 %{_bindir}/dovecot-sysreport
 %{_bindir}/dsync
 %{_bindir}/procmail2sieve.pl
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/checkpassword-reply
-%attr(2755,root,mail) %{_libexecdir}/%{name}/deliver
+%{_libexecdir}/%{name}/deliver
 %{_libexecdir}/%{name}/aggregator
 %{_libexecdir}/%{name}/anvil
 %{_libexecdir}/%{name}/auth
@@ -408,7 +404,7 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/director
 %{_libexecdir}/%{name}/dns-client
 %{_libexecdir}/%{name}/doveadm-server
-%{_libexecdir}/%{name}/dovecot-lda
+%attr(2755,root,mail) %{_libexecdir}/%{name}/dovecot-lda
 %{_libexecdir}/%{name}/health-check.sh
 %{_libexecdir}/%{name}/imap-urlauth
 %{_libexecdir}/%{name}/imap-urlauth-login

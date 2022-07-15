@@ -1,0 +1,4 @@
+g dovecot 193 -
+u dovecot 193:193 "Dovecot IMAP" /var/lib/dovecot
+g dovenull 994 -
+u dovenull 192:994 "Dovecot NULL" /var/lib/dovecot
