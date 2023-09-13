@@ -47,7 +47,7 @@ BuildRequires:	pkgconfig(liblz4)
 BuildRequires:	pkgconfig(libzstd)
 BuildRequires:	pkgconfig(libsystemd)
 %if %{with ldap}
-BuildRequires:	openldap-devel
+BuildRequires:	pkgconfig(ldap)
 %endif
 %if %{with lucene}
 BuildRequires:	pkgconfig(libclucene-core)
