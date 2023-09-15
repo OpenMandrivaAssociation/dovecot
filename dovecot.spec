@@ -12,12 +12,12 @@
 %define _disable_rebuild_configure 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.5.20
+%define sieve_version 0.5.21
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.3.20
-Release:	3
+Version:	2.3.21
+Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 Url:		http://dovecot.org
