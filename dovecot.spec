@@ -20,7 +20,7 @@ Version:	2.3.21
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
-Url:		http://dovecot.org
+Url:		https://dovecot.org
 Source0:	http://dovecot.org/releases/%{major}/dovecot-%{version}.tar.gz
 Source1:	http://dovecot.org/releases/%{major}/dovecot-%{version}.tar.gz.sig
 Source2:	%{name}-pamd
