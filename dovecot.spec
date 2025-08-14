@@ -43,6 +43,7 @@ BuildRequires:	pkgconfig(liblzma)
 BuildRequires:	pkgconfig(liblz4)
 BuildRequires:	pkgconfig(libzstd)
 BuildRequires:	pkgconfig(libsystemd)
+BuildRequires:	pkgconfig(lua)
 %if %{with ldap}
 BuildRequires:	pkgconfig(ldap)
 %endif
