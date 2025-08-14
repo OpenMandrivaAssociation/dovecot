@@ -1,0 +1,13 @@
+diff -up dovecot-2.4.1-4/configure.ac.omv~ dovecot-2.4.1-4/configure.ac
+diff -up dovecot-2.4.1-4/m4/want_stemmer.m4.omv~ dovecot-2.4.1-4/m4/want_stemmer.m4
+--- dovecot-2.4.1-4/m4/want_stemmer.m4.omv~	2025-08-11 10:10:56.624231755 +0200
++++ dovecot-2.4.1-4/m4/want_stemmer.m4	2025-08-11 10:18:55.208534995 +0200
+@@ -3,6 +3,8 @@ AC_DEFUN([DOVECOT_WANT_STEMMER], [
+     AC_CHECK_LIB(stemmer, sb_stemmer_new, [
+       have_fts_stemmer=yes
+       AC_DEFINE(HAVE_LANG_STEMMER,, [Define if you want stemming support for lib-language])
++      CPPFLAGS="$CPPFLAGS -I/usr/include/libstemmer"
++      CFLAGS="$CFLAGS -I/usr/include/libstemmer"
+     ], [
+       AS_IF([test "$want_stemmer" = "yes"], [
+         AC_MSG_ERROR(cannot build with stemmer support: libstemmer not found)

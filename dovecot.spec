@@ -12,28 +12,25 @@
 %define _disable_rebuild_configure 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define sieve_version 0.5.21
+%define upstreamver %(echo %version |rev |sed -e 's,\\.,-,' |rev)
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.3.21.1
+Version:	2.4.1.4
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
 Url:		https://dovecot.org
-Source0:	http://dovecot.org/releases/%{major}/dovecot-%{version}.tar.gz
-Source1:	http://dovecot.org/releases/%{major}/dovecot-%{version}.tar.gz.sig
+Source0:	http://dovecot.org/releases/%{major}/dovecot-%{upstreamver}.tar.gz
+Source1:	http://dovecot.org/releases/%{major}/dovecot-%{upstreamver}.tar.gz.sig
 Source2:	%{name}-pamd
 Source3:	%{name}-init
 Source4:	http://dovecot.org/tools/migration_wuimp_to_dovecot.pl
 Source5:	http://dovecot.org/tools/mboxcrypt.pl
-Source6:	http://pigeonhole.dovecot.org/releases/%{major}/dovecot-%{major}-pigeonhole-%{sieve_version}.tar.gz
+Source6:	http://pigeonhole.dovecot.org/releases/%{major}/dovecot-pigeonhole-%{upstreamver}.tar.gz
 Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Source20:	dovecot.sysusers
 Source100:	%{name}.rpmlintrc
-Patch0:		dovecot-conf-ssl.patch
-Patch1:		dovecot-2.2.2-quota-tirpc.patch
-Patch2:		dovecot-2.2.26.0-find-libstemmer.patch
 
 BuildRequires:	cap-devel
 BuildRequires:	gettext-devel
@@ -103,7 +100,7 @@ Group:		System/Servers
 Requires:	%{name} >= %{version}
 
 %description	plugins-sieve
-This package provides the CMU Sieve plugin version %{sieve_version} for dovecot LDA.
+This package provides the CMU Sieve plugin for dovecot LDA.
 %endif
 
 %if %{with pgsql}
@@ -185,11 +182,14 @@ want to install the postfix-dovecot-config package instead if you wish
 to run a combination of the Postfix SMTP server and the Dovecot IMAP/POP3
 server.
 
+%patchlist
+dovecot-2.4.1-find-libstemmer.patch
+
 %prep
 
-%setup -qn %{name}-%{version}
+%setup -qn %{name}-%{upstreamver}
 %if %{with sieve}
-%setup -qn %{name}-%{version} -D -T -a 6
+%setup -qn %{name}-%{upstreamver} -D -T -a 6
 %endif
 %autopatch -p1
 
@@ -242,10 +242,10 @@ autoconf
 %endif
     --with-libcap
 
-%make
+%make_build
 
 %if %{with sieve}
-pushd dovecot-*-pigeonhole-%{sieve_version}
+pushd dovecot-pigeonhole-%{upstreamver}
 rm -f configure
 autoreconf -fi
 touch doc/man/sieve-filter.1
@@ -253,7 +253,7 @@ touch doc/man/sieve-filter.1
     --disable-static \
     --with-dovecot=../ \
     --with-unfinished-features
-%make
+%make_build
 popd
 %endif
 
@@ -268,7 +268,7 @@ install -d %{buildroot}/var/lib/%{name}
 %makeinstall_std
 
 %if %{with sieve}
-pushd dovecot-*-pigeonhole-%{sieve_version}
+pushd dovecot-pigeonhole-%{upstreamver}
 %makeinstall_std
 # temporary borkiness i guess...
 f=%{buildroot}%{_mandir}/man1/sieve-filter.1
@@ -285,8 +285,10 @@ mkdir -p %{buildroot}%{_sysusersdir}
 cp %{S:20} %{buildroot}%{_sysusersdir}/dovecot.conf
 %endif
 pwd
-cp doc/example-config/dovecot.conf %{buildroot}%{_sysconfdir}/%{name}/dovecot.conf
-cp -a doc/example-config/conf.d %buildroot%{_sysconfdir}/%{name}/
+cp doc/dovecot.conf %{buildroot}%{_sysconfdir}/%{name}/dovecot.conf
+%if %{with sieve}
+cp -a dovecot-pigeonhole-*/doc/example-config/conf.d %buildroot%{_sysconfdir}/%{name}/
+%endif
 cp %{SOURCE4} .
 cp %{SOURCE5} .
 # procmail2sieve converter
@@ -380,11 +382,10 @@ rm -rf %{buildroot}
 # we set the 'deliver' command sgid mail and have the config file owned
 # by root.mail. See bug #44926. idea from Josh Bressers at Red Hat.
 # - AdamW 2008/10
-%doc AUTHORS ChangeLog COPYING* NEWS README TODO
+%doc AUTHORS ChangeLog COPYING* NEWS TODO
 %doc doc/*.sh doc/*.txt doc/*.cnf
 %attr(0750,root,mail) %dir %{_sysconfdir}/%{name}
 %attr(0750,root,mail) %dir %{_sysconfdir}/%{name}/conf.d
-%doc %{_sysconfdir}/dovecot/README
 %if %{with systemd}
 %{_unitdir}/dovecot.service
 %{_unitdir}/dovecot.socket
@@ -397,18 +398,15 @@ rm -rf %{buildroot}
 %{_bindir}/doveconf
 %{_bindir}/dovecot
 %{_bindir}/dovecot-sysreport
-%{_bindir}/dsync
 %{_bindir}/procmail2sieve.pl
 %dir %{_libexecdir}/%{name}
-%{_libexecdir}/%{name}/checkpassword-reply
-%{_libexecdir}/%{name}/deliver
-%{_libexecdir}/%{name}/aggregator
 %{_libexecdir}/%{name}/anvil
 %{_libexecdir}/%{name}/auth
 %{_libexecdir}/%{name}/config
 %{_libexecdir}/%{name}/decode2text.sh
+%{_libexecdir}/%{name}/deliver
 %{_libexecdir}/%{name}/dict
-%{_libexecdir}/%{name}/director
+%{_libexecdir}/%{name}/dict-expire
 %{_libexecdir}/%{name}/dns-client
 %{_libexecdir}/%{name}/doveadm-server
 %attr(2755,root,mail) %{_libexecdir}/%{name}/dovecot-lda
@@ -418,20 +416,16 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/imap-urlauth-worker
 %{_libexecdir}/%{name}/indexer
 %{_libexecdir}/%{name}/indexer-worker
-%{_libexecdir}/%{name}/ipc
 %{_libexecdir}/%{name}/gdbhelper
 %{_libexecdir}/%{name}/imap
 %{_libexecdir}/%{name}/imap-hibernate
 %{_libexecdir}/%{name}/imap-login
 %{_libexecdir}/%{name}/lmtp
 %{_libexecdir}/%{name}/log
-%{_libexecdir}/%{name}/maildirlock
-%{_libexecdir}/%{name}/old-stats
 %{_libexecdir}/%{name}/pop3
 %{_libexecdir}/%{name}/pop3-login
 %{_libexecdir}/%{name}/quota-status
 %{_libexecdir}/%{name}/rawlog
-%{_libexecdir}/%{name}/replicator
 %{_libexecdir}/%{name}/script
 %{_libexecdir}/%{name}/script-login
 %{_libexecdir}/%{name}/stats
@@ -439,16 +433,16 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/submission-login
 %{_libexecdir}/%{name}/xml2text
 %dir %{_libdir}/%{name}
-%{_libdir}/%{name}/libdcrypt_openssl.so
 %{_libdir}/%{name}/libdovecot-compression.so*
 %{_libdir}/%{name}/libdovecot-dsync.so*
-%{_libdir}/%{name}/libdovecot-fts.so*
+%{_libdir}/%{name}/libdovecot-language.so*
 %{_libdir}/%{name}/libdovecot-lda.so*
 %{_libdir}/%{name}/libdovecot-ldap.so*
 %{_libdir}/%{name}/libdovecot-login.so*
+%{_libdir}/%{name}/libdovecot-lua.so*
 %{_libdir}/%{name}/libdovecot-sql.so*
-#{_libdir}/%{name}/libdovecot-ssl.so*
 %{_libdir}/%{name}/libdovecot-storage.so*
+%{_libdir}/%{name}/libdovecot-storage-lua.so*
 %{_libdir}/%{name}/libdovecot.so*
 %dir %{_libdir}/%{name}/modules
 %{_libdir}/%{name}/modules/*.so
@@ -477,8 +471,6 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/modules/doveadm/*.so
 %dir %{_libdir}/%{name}/modules/settings
 %{_libdir}/%{name}/modules/settings/*.so
-%dir %{_libdir}/%{name}/modules/old-stats
-%{_libdir}/%{name}/modules/old-stats/*.so
 %{_datadir}/%{name}
 %attr(0700,root,root) %dir /var/lib/%{name}
 %{_mandir}/man1/deliver.1*
@@ -487,7 +479,6 @@ rm -rf %{buildroot}
 %{_mandir}/man1/dovecot-sysreport.1*
 %{_mandir}/man1/dovecot-lda.1*
 %{_mandir}/man1/dovecot.1*
-%{_mandir}/man1/dsync.1*
 %{_mandir}/man1/sieve-dump.1*
 %{_mandir}/man1/sieved.1*
 %{_mandir}/man7/doveadm-search-query.7*
@@ -504,11 +495,13 @@ rm -rf %{buildroot}
 %{_bindir}/sievec
 %{_bindir}/sieve-dump
 %{_libdir}/%name/libdovecot-sieve.so*
+%{_libdir}/dovecot/libdovecot-managesieve.so*
 %{_libdir}/dovecot/modules/sieve/lib90_sieve_extprograms_plugin.so
 %{_libdir}/dovecot/modules/sieve/lib90_sieve_imapsieve_plugin.so
 %{_libexecdir}/%name/managesieve
 %{_libexecdir}/%name/managesieve-login
 %{_mandir}/man1/sievec.1*
+%{_mandir}/man1/sieve-filter.1*
 %{_mandir}/man1/sieve-test.1*
 %endif
 
