@@ -12,11 +12,12 @@
 %define _disable_rebuild_configure 1
 
 %define major %(echo %version |cut -d. -f1-2)
-%define upstreamver %(echo %version |rev |sed -e 's,\\.,-,' |rev)
+%define upstreamver %{version}
+#define upstreamver %(echo %version |rev |sed -e 's,\\.,-,' |rev)
 
 Summary:	Secure IMAP and POP3 server
 Name: 		dovecot
-Version:	2.4.1.4
+Version:	2.4.2
 Release:	1
 License:	MIT and LGPLv2 and BSD-like and Public Domain
 Group:		System/Servers
@@ -429,6 +430,7 @@ rm -rf %{buildroot}
 %{_libexecdir}/%{name}/rawlog
 %{_libexecdir}/%{name}/script
 %{_libexecdir}/%{name}/script-login
+%{_libexecdir}/%{name}/settings-history.py
 %{_libexecdir}/%{name}/stats
 %{_libexecdir}/%{name}/submission
 %{_libexecdir}/%{name}/submission-login
@@ -514,6 +516,7 @@ rm -rf %{buildroot}
 %if %{with gssapi}
 %files plugins-gssapi
 %{_libdir}/%{name}/modules/auth/libmech_gssapi.so
+%{_libdir}/%{name}/libdovecot-gssapi.so*
 %endif
 
 %if %{with sqlite}
