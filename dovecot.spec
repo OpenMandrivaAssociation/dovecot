@@ -33,6 +33,11 @@ Source7:	http://www.earth.ox.ac.uk/~steve/sieve/procmail2sieve.pl
 Source20:	dovecot.sysusers
 Source100:	%{name}.rpmlintrc
 
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	cap-devel
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
